@@ -62,10 +62,12 @@ runs:
           echo "::set-output name=name::$POM_NAME"
           echo "POM_APP_VERSION=$POM_VERSION" >> $GITHUB_ENV
           echo "POM_APP_NAME=$POM_NAME" >> $GITHUB_ENV
+      env:
+        MY_VAR: $POM_VERSION          
 
     - name: use-version-from-check
       shell: bash
-      run: echo "New version is: " ${{pom_dat.outputs.version}}
+      run: echo "New version is: " ${{env.MY_VAR}}
 
 
 
