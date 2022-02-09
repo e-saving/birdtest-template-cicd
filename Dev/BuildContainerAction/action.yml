@@ -32,6 +32,17 @@ inputs:
     descriptions: "SonarQube Token"
     required: false
     default: 01415c3ad9dc5cde2f3dd5cde9d005f5cd2c6be5
+  acr_registry_server: 
+    descriptions: "ACR Registry Server"
+    required: false
+    default: gableesaving.azurecr.io
+  acr_user: 
+    descriptions: "ACR Login User"
+    required: false
+    default: gableesaving    
+  acr_password: 
+    descriptions: "ACR Login password"
+    required: true
     
     
 #outputs:
@@ -139,3 +150,27 @@ runs:
        SONAR_TOKEN: ${{ inputs.sonar_token }}
       with:
         scanMetadataReportFile: project_src/target/sonar/report-task.txt
+        
+    - name: Log in to Azure Container Registry (ACR)
+      uses: azure/docker-login@v1
+      with:
+          login-server: ${{ inputs.acr_registry_server }}
+          username: ${{ inputs.acr_user }}
+          password: ${{ inputs.acr_password }}
+
+      - name: Build and Push Container Image (ACR)
+        run: |
+            echo "Build and Push Container Image (ACR)"
+            img_version=$(cat version/version_control.txt|grep '^IMAGE_VERSION'|awk -F'=' '{print($2)}')
+            app_name=$(cat version/version_control.txt|grep '^APP_NAME'|awk -F'=' '{print($2)}')
+            cd project_src
+            ls -l
+            docker build . -t ${{ inputs.acr_registry_server }}/${app_name}:${img_version}
+            docker push ${{ inputs.acr_registry_server }}/${app_name}:${img_version}
+          
+    - name: Test Build Image
+      run: |
+          echo "Test Build Image"
+          echo "appname=${app_name}"
+          echo "img_version=${img_version}"
+
