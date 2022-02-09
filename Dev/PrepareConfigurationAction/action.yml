@@ -67,7 +67,7 @@ runs:
       shell: bash
       run: |
           echo "Generate new version"
-          pom_version=$(cat pom_data.txt|grep '^POM_APP_VERSION'|awk -F'=' '{print($1)}' )
+          pom_version=$(cat pom_data.txt|grep '^POM_APP_VERSION'|awk -F'=' '{print($2)}' )
           echo "pom_version=${pom_version}"
           major_version=$(echo ${pom_version}|awk -F'.' '{print($1)}')
           minor_version=$(echo ${pom_version}|awk -F'.' '{print($2)}')
