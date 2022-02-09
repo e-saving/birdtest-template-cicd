@@ -134,8 +134,8 @@ runs:
       
     - name: Check Code Quality Gate (SonarQube)
       uses: SonarSource/sonarqube-quality-gate-action@v1.0.0
-      timeout-minutes: 5
+      #timeout-minutes: 5
       env:
-       SONAR_TOKEN: ${{ input.sonar_token }}
+       SONAR_TOKEN: ${{ inputs.sonar_token }}
       with:
         scanMetadataReportFile: project_src/target/sonar/report-task.txt
