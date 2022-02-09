@@ -60,9 +60,11 @@ runs:
           POM_NAME=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout)
           echo "::set-output name=version::$POM_VERSION"
           echo "::set-output name=name::$POM_NAME"
-          echo "POM_APP_VERSION=$POM_VERSION" >> $GITHUB_ENV
-          echo "POM_APP_NAME=$POM_NAME" >> $GITHUB_ENV
+          echo "POM_APP_VERSION=$POM_VERSION" > ../version_control.txt     
+          echo "POM_APP_NAME=$POM_NAME" >> ../version_control.txt
  
-
-
-
+      - name: Upload version artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: version
+          path: version_control.txt   
