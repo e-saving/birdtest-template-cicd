@@ -74,9 +74,10 @@ runs:
           then
             rm -Rf badges
           fi
-          ls -l badges
           mkdir -p badges
+          ls -l badges
           #mvn package -Pcoverage
+          java -version
           mvn package            
           ls -l badges/
           ls -l target/
