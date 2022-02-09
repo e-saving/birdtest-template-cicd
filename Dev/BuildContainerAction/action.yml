@@ -149,6 +149,8 @@ runs:
           echo "Build and Push Container Image (ACR)"
           img_version=$(cat version/version_control.txt|grep '^IMAGE_VERSION'|awk -F'=' '{print($2)}')
           app_name=$(cat version/version_control.txt|grep '^APP_NAME'|awk -F'=' '{print($2)}')
+          echo "IMAGE_VERSION=${img_version}" >> $GITHUB_ENV
+          echo "APP_NAME=${app_name}" >> $GITHUB_ENV          
           cd project_src
           ls -l
           docker build . -t ${{ inputs.acr_registry_server }}/${app_name}:${img_version}
@@ -158,6 +160,6 @@ runs:
       shell: bash
       run: |
           echo "Test Build Image"
-          echo "appname=${app_name}"
-          echo "img_version=${img_version}"
+          echo "appname=${{env.IMAGE_VERSION}}"
+          echo "img_version=${{env.APP_NAME}}"
 
