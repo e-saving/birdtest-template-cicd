@@ -28,7 +28,7 @@ runs:
         ref: ${{ inputs.sourcecode_manage_branch }}
         path: project_src
         
-    - name: Checkout Source Code
+    - name: Check Source Code
       shell: bash
       run: |
         cd project_src
@@ -42,13 +42,14 @@ runs:
     #      git switch ${{ env.SOURCECODE_MANAGE_BRANCH }}
     
     - name: Get POM Version
-    - uses: avides/actions-project-version-check@latest
+      uses: avides/actions-project-version-check@latest
       id: actions_project_version_check
       with:
         token: ${{ secrets.gitops_token }}
         file-to-check: project_src/pom.xml
 
     - name: use-version-from-check
+      shell: bash
       run: echo "New version is: " ${{ steps.actions_project_version_check.outputs.version }}
 
 
