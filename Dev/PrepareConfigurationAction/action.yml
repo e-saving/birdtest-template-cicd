@@ -41,6 +41,7 @@ runs:
     - name: Check Source Code
       shell: bash
       run: |
+        echo "Check Source Code"
         cd project_src
         pwd
         ls -l
@@ -55,6 +56,7 @@ runs:
       id: pom_dat
       shell: bash
       run: |
+          echo "Get version"
           cd project_src
           POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           POM_NAME=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout)
