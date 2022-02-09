@@ -159,6 +159,7 @@ runs:
           password: ${{ inputs.acr_password }}
 
     - name: Build and Push Container Image (ACR)
+      shell: bash
       run: |
           echo "Build and Push Container Image (ACR)"
           img_version=$(cat version/version_control.txt|grep '^IMAGE_VERSION'|awk -F'=' '{print($2)}')
@@ -169,6 +170,7 @@ runs:
           docker push ${{ inputs.acr_registry_server }}/${app_name}:${img_version}
 
     - name: Test Build Image
+      shell: bash
       run: |
           echo "Test Build Image"
           echo "appname=${app_name}"
