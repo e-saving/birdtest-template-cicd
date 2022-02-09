@@ -12,8 +12,7 @@ inputs:
     default: 'master'
   gitops_token:
     descriptions: "GitOps Repository PAT"
-    required: false
-    default: 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
+    required: true    
   gitops_app_name: 
     descriptions: "GitOps Application Name as home directory name that manage configution"
     required: false
@@ -24,8 +23,7 @@ inputs:
     default: develop
   github_token: 
     descriptions: "GitHub PAT"
-    required: false
-    default: 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
+    required: true    
     
 outputs:
   pom_app_version:
