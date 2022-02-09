@@ -3,23 +3,29 @@ description: "Prepare Configuration"
 
 inputs:
   gitops_repo:
-    descriptions: "Param#1"
-    required: true
+    descriptions: "GitOps Repository in GitHub"
+    required: false
+    default: 'e-saving/gitops_deployment'
   gitops_manage_branch:
-    descriptions: "Param#2"
-    required: true
+    descriptions: "GitOps Repository Branch"
+    required: false
+    default: 'master'
   gitops_token:
-    descriptions: "Param#3"
-    required: true
+    descriptions: "GitOps Repository PAT"
+    required: false
+    default: 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
   gitops_app_name: 
-    descriptions: "Param#4"
-    required: true
+    descriptions: "GitOps Application Name as home directory name that manage configution"
+    required: false
+    default: default
   sourcecode_manage_branch: 
-    descriptions: "Param#5"
-    required: true
+    descriptions: "Project source code repository branch"
+    required: false
+    default: develop
   github_token: 
-    descriptions: "Param#6"
-    required: true
+    descriptions: "GitHub PAT"
+     required: false
+     default: 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
     
 outputs:
   pom_app_version:
@@ -37,14 +43,6 @@ runs:
       with:        
         ref: ${{ inputs.sourcecode_manage_branch }}
         path: project_src
-        
-    - name: Check Source Code
-      shell: bash
-      run: |
-        echo "Check Source Code"
-        cd project_src
-        pwd
-        ls -l
   
     #- name: Checkout Source Code
     #  run: |
@@ -62,11 +60,28 @@ runs:
           POM_NAME=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout)
           echo "::set-output name=version::$POM_VERSION"
           echo "::set-output name=name::$POM_NAME"
-          echo "POM_APP_VERSION=$POM_VERSION" > ../version_control.txt     
-          echo "POM_APP_NAME=$POM_NAME" >> ../version_control.txt
- 
+          echo "POM_APP_VERSION=$POM_VERSION" > ../pom_data.txt     
+          echo "POM_APP_NAME=$POM_NAME" >> ../pom_data.txt
+          
+    - name: Generate new version
+      shell: bash
+      run: |
+          echo "Generate new version"
+          pom_version=$(cat pom_data.txt|grep '^POM_APP_VERSION'|awk -F'=' '{print($1)}' )
+          echo "pom_version=${pom_version}"
+          major_version=$(echo ${pom_version}|awk -F'.' '{print($1)}')
+          minor_version=$(echo ${pom_version}|awk -F'.' '{print($2)}')
+          cur_build_version=$(echo ${pom_version}|awk -F'.' '{print($3)}')
+          ((cur_build_version=cur_build_version+0))
+          ((new_build_version=cur_build_version+1))
+          pom_new_version="${major_version}.${minor_version}.${new_build_version}"
+          echo "BUILD_VERSION=${new_build_version}" > version_control.txt
+          echo "POM_VERSION=${pom_new_version}" >> version_control.txt
+          echo "IMAGE_VERSION=${pom_new_version}" >> version_control.txt
+
     - name: Upload version artifact
       uses: actions/upload-artifact@v1
       with:
          name: version
-         path: version_control.txt   
+         path: version_control.txt
+          
