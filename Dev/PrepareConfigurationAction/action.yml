@@ -11,7 +11,7 @@ inputs:
   gitops_token:
     descriptions: "Param#3"
     required: true
-  gitops_manage_homepath: 
+  gitops_app_name: 
     descriptions: "Param#4"
     required: true
     
@@ -31,7 +31,7 @@ runs:
       shell: bash
       id: version
       run: |
-          cd manage_gitops/${{ inputs.gitops_manage_homepath }}
+          cd manage_gitops/${{ inputs.gitops_app_name }}
           cur_build_number=$(cat version_control.txt|grep '^BUILD_VERSION'|awk -F'=' '{print($2)}')
           echo "cur_build_number=${cur_build_number}"
           ((new_build_number=cur_build_number+1))
