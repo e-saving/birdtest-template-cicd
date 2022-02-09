@@ -24,7 +24,7 @@ runs:
       with:
         repository: e-saving/gitops_deployment
         ref: ${{ inputs.gitops_manage_branch }}
-        token: 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
+        token: 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
         path: manage_gitops
       
     - name: Geneate new Build Number
