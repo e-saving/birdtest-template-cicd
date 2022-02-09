@@ -24,8 +24,8 @@ inputs:
     default: develop
   github_token: 
     descriptions: "GitHub PAT"
-     required: false
-     default: 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
+    required: false
+    default: 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
     
 outputs:
   pom_app_version:
