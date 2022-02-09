@@ -42,51 +42,55 @@ runs:
         ref: ${{ inputs.sourcecode_manage_branch }}
         path: project_src
         
-    - name: Set up JDK 8
-      uses: actions/setup-java@v2
-      with:
-        java-version: '8'
-        distribution: 'adopt'
-  
     #- name: Checkout Source Code
     #  run: |
     #      git clone https://${{ secrets.GITLAB_USERNAME }}:${{ secrets.GITLAB_TOKEN }}@${{ env.GITLAB_REPO }}
     #      cd ${{ env.SOURCECODE_HOME_PATH }}
     #      git switch ${{ env.SOURCECODE_MANAGE_BRANCH }}
-    
-    - name: Get version
-      #id: pom_dat
-      shell: bash
-      run: |
-          echo "Get version"
-          cd project_src
-          POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          POM_NAME=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout)
-          #echo "::set-output name=version::$POM_VERSION"
-          #echo "::set-output name=name::$POM_NAME"          
-          echo "POM_APP_VERSION=$POM_VERSION" > ../pom_data.txt     
-          echo "POM_APP_NAME=$POM_NAME" >> ../pom_data.txt
-          
-    - name: Generate new version
-      shell: bash
-      run: |
-          echo "Generate new version"
-          cat pom_data.txt
-          pom_version=$(cat pom_data.txt|grep '^POM_APP_VERSION'|awk -F'=' '{print($2)}' )
-          echo "pom_version=${pom_version}"
-          major_version=$(echo ${pom_version}|awk -F'.' '{print($1)}')
-          minor_version=$(echo ${pom_version}|awk -F'.' '{print($2)}')
-          cur_build_version=$(echo ${pom_version}|awk -F'.' '{print($3)}')
-          ((cur_build_version=cur_build_version+0))
-          ((new_build_version=cur_build_version+1))
-          pom_new_version="${major_version}.${minor_version}.${new_build_version}"
-          echo "BUILD_VERSION=${new_build_version}" > version_control.txt
-          echo "POM_VERSION=${pom_new_version}" >> version_control.txt
-          echo "IMAGE_VERSION=${pom_new_version}" >> version_control.txt
-
-    - name: Upload version artifact
-      uses: actions/upload-artifact@v1
+        
+    - name: Set up JDK 11
+      uses: actions/setup-java@v2
       with:
-         name: version
-         path: version_control.txt
-          
+        java-version: '11'
+        distribution: 'adopt'
+        
+    - name: Download version artifact
+      uses: actions/download-artifact@v1
+      with:
+        name: version
+
+    - name: Check version number
+      shell: bash
+      run: |
+        img_version=$(cat version/version_control.txt|grep '^IMAGE_VERSION'|awk -F'=' '{print($2)}')
+        echo "img_version is ${img_version}"
+        #echo "IMAGE_VERSION=${img_version} " >> $GITHUB_ENV
+        
+    - name: Build and Unit Testing with Maven
+      shell: bash
+      run: |
+          cd project_src
+          if [[ -d badges ]]
+          then
+            rm -Rf badges
+          fi
+          mkdir -p badges
+          #mvn package -Pcoverage
+          mvn package            
+          ls -l badges
+          ls -l target
+          ls -l target/site/jacoco/
+            
+      - name: Generate Unit Test Result (JaCoCo)
+        uses: cicirello/jacoco-badge-generator@v2
+        with:
+          badges-directory: project_src/badges
+          jacoco-csv-file: project_src/target/site/jacoco/jacoco.csv
+          generate-branches-badge: true
+          generate-summary: true
+           
+      - name: Upload Unit Test Coverage Report (JaCoCo)
+        uses: actions/upload-artifact@v2
+        with:
+          name: unit-test-report
+          path: project_src/target/site/jacoco/
