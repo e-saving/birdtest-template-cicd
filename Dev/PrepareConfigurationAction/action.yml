@@ -44,7 +44,7 @@ runs:
     #      git switch ${{ env.SOURCECODE_MANAGE_BRANCH }}
     
     - name: Get POM Version
-      uses: avides/actions-project-version-check@latest
+      uses: avides/actions-project-version-check@v1.2.1
       id: test
       with:
         token: ${{ inputs.github_token }}
