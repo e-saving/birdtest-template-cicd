@@ -50,8 +50,8 @@ runs:
         token: ${{ inputs.github_token }}
         file-to-check: project_src/pom.xml
 
-    - name: use-version-from-check
-      shell: bash
+    #- name: use-version-from-check
+    #  shell: bash
       run: echo "New version is: " ${{ steps.test.outputs.version }}
 
 
