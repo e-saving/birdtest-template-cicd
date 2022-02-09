@@ -158,16 +158,16 @@ runs:
           username: ${{ inputs.acr_user }}
           password: ${{ inputs.acr_password }}
 
-      - name: Build and Push Container Image (ACR)
-        run: |
-            echo "Build and Push Container Image (ACR)"
-            img_version=$(cat version/version_control.txt|grep '^IMAGE_VERSION'|awk -F'=' '{print($2)}')
-            app_name=$(cat version/version_control.txt|grep '^APP_NAME'|awk -F'=' '{print($2)}')
-            cd project_src
-            ls -l
-            docker build . -t ${{ inputs.acr_registry_server }}/${app_name}:${img_version}
-            docker push ${{ inputs.acr_registry_server }}/${app_name}:${img_version}
-          
+    - name: Build and Push Container Image (ACR)
+      run: |
+          echo "Build and Push Container Image (ACR)"
+          img_version=$(cat version/version_control.txt|grep '^IMAGE_VERSION'|awk -F'=' '{print($2)}')
+          app_name=$(cat version/version_control.txt|grep '^APP_NAME'|awk -F'=' '{print($2)}')
+          cd project_src
+          ls -l
+          docker build . -t ${{ inputs.acr_registry_server }}/${app_name}:${img_version}
+          docker push ${{ inputs.acr_registry_server }}/${app_name}:${img_version}
+
     - name: Test Build Image
       run: |
           echo "Test Build Image"
