@@ -27,7 +27,7 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
-        run: |
-          v_test=$(echo ${{secrets.BIRD_DEMO}})
-          echo Hello, world! => ${v_test}
+        run: |          
+          echo "Hello, world! => ${{secrets.BIRD_DEMO}}" > test.txt
+          cat test.txt
 
