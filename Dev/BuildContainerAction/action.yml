@@ -74,11 +74,12 @@ runs:
           then
             rm -Rf badges
           fi
+          ls -l badges
           mkdir -p badges
           #mvn package -Pcoverage
           mvn package            
-          ls -l badges
-          ls -l target
+          ls -l badges/
+          ls -l target/
           ls -l target/site/jacoco/
             
     - name: Generate Unit Test Result (JaCoCo)
