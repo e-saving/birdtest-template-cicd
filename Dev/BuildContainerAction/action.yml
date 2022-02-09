@@ -68,7 +68,7 @@ runs:
         #echo "IMAGE_VERSION=${img_version} " >> $GITHUB_ENV
         
     - name: Build and Unit Testing with Maven
-      shell: ksh
+      shell: bash
       run: |
           echo "Build and Unit Testing with Maven"
           cd project_src
