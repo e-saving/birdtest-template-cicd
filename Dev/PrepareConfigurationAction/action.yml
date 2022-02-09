@@ -30,6 +30,7 @@ runs:
         path: manage_gitops
       
      - name: Geneate new Build Number
+       shell: bash
        run: |
           cd manage_gitops/${{ env.GITOPS_MANAGE_HOME_PATH }}
           cur_build_number=$(cat version_control.txt|grep '^BUILD_VERSION'|awk -F'=' '{print($2)}')
