@@ -22,12 +22,17 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-
+      - name: Checkout Repo
+        uses: actions/checkout@v2.4.0
+        with:
+          repository: e-saving/demo-web-react
+          ref: ${{ secret.BIRD_DEMO }}
+          token: ${{ secrets.GITOPS_TOKEN }}
+          path: manage_gitops
+          
       # Runs a single command using the runners shell
-      - name: Run a one-line script
+      - name: Check MD File
         run: |          
-          echo "Hello, world! => ${{secrets.BIRD_DEMO}}" > test.txt
-          cat test.txt
+          cd manage_gitops
+          cat README.md
 
