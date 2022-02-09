@@ -56,6 +56,7 @@ runs:
           cd project_src
           pwd
           ls -l
+          mvn help:evaluate -Dexpression=project.version -q -DforceStdout
           POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           POM_NAME=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout)
           echo "::set-output name=version::$POM_VERSION"
