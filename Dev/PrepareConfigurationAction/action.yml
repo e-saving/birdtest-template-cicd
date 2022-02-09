@@ -43,14 +43,14 @@ runs:
     
     - name: Get POM Version
       uses: avides/actions-project-version-check@latest
-      id: actions_project_version_check
+      id: test
       with:
         token: ${{ inputs.gitops_token }}
         file-to-check: project_src/pom.xml
 
     - name: use-version-from-check
       shell: bash
-      run: echo "New version is: " ${{ actions_project_version_check.outputs.version }}
+      run: echo "New version is: " ${{ steps.test.outputs.version }}
 
 
 
