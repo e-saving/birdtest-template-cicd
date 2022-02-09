@@ -22,7 +22,7 @@ runs:
     - name: Checkout GitOps Repo
       uses: actions/checkout@v2.4.0
       with:
-        repository: ${{ inputs.gitops_repo }}
+        repository: e-saving/gitops_deployment
         ref: ${{ inputs.gitops_manage_branch }}
         token: ${{ inputs.gitops_token }}
         path: manage_gitops
