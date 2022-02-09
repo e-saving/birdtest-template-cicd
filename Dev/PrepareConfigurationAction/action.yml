@@ -15,8 +15,8 @@ inputs:
 env: 
   GITOPS_MANAGE_BRANCH: develop
   GITOPS_MANAGE_HOME_PATH: api-demo-java8
-  GITOPS_REPO:  e-saving/gitops_deployment 
-  GITOPS_TOKEN: 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
+  GITOPS_REPO:  e-saving/gitops_deployment
+  GITOPS_TK: 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
 
 runs:
   using: "composite"
@@ -26,7 +26,7 @@ runs:
       with:
         repository: ${{ env.GITOPS_REPO }}
         ref: ${{ env.GITOPS_MANAGE_BRANCH }}
-        token: ${{ env.GITOPS_TOKEN }}
+        token: ${{ env.GITOPS_TK }}
         path: manage_gitops
       
     - name: Geneate new Build Number
