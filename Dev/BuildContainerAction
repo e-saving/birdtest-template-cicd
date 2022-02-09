@@ -1,0 +1,92 @@
+name: "Build Container"
+description: "Build Container"
+
+inputs:
+  gitops_repo:
+    descriptions: "GitOps Repository in GitHub"
+    required: false
+    default: 'e-saving/gitops_deployment'
+  gitops_manage_branch:
+    descriptions: "GitOps Repository Branch"
+    required: false
+    default: 'master'
+  gitops_token:
+    descriptions: "GitOps Repository PAT"
+    required: true    
+  gitops_app_name: 
+    descriptions: "GitOps Application Name as home directory name that manage configution"
+    required: false
+    default: default
+  sourcecode_manage_branch: 
+    descriptions: "Project source code repository branch"
+    required: false
+    default: develop
+  github_token: 
+    descriptions: "GitHub PAT"
+    required: true    
+    
+#outputs:
+#  pom_app_version:
+#    description: "version number from pom.xml"
+#    value: ${{ steps.pom_dat.outputs.version }}
+#  pom_app_name:
+#    description: "version number from pom.xml"
+#    value: ${{ steps.pom_dat.outputs.name }}
+    
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout Source Code
+      uses: actions/checkout@v2.4.0
+      with:        
+        ref: ${{ inputs.sourcecode_manage_branch }}
+        path: project_src
+        
+    - name: Set up JDK 8
+      uses: actions/setup-java@v2
+      with:
+        java-version: '8'
+        distribution: 'adopt'
+  
+    #- name: Checkout Source Code
+    #  run: |
+    #      git clone https://${{ secrets.GITLAB_USERNAME }}:${{ secrets.GITLAB_TOKEN }}@${{ env.GITLAB_REPO }}
+    #      cd ${{ env.SOURCECODE_HOME_PATH }}
+    #      git switch ${{ env.SOURCECODE_MANAGE_BRANCH }}
+    
+    - name: Get version
+      #id: pom_dat
+      shell: bash
+      run: |
+          echo "Get version"
+          cd project_src
+          POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          POM_NAME=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout)
+          #echo "::set-output name=version::$POM_VERSION"
+          #echo "::set-output name=name::$POM_NAME"          
+          echo "POM_APP_VERSION=$POM_VERSION" > ../pom_data.txt     
+          echo "POM_APP_NAME=$POM_NAME" >> ../pom_data.txt
+          
+    - name: Generate new version
+      shell: bash
+      run: |
+          echo "Generate new version"
+          cat pom_data.txt
+          pom_version=$(cat pom_data.txt|grep '^POM_APP_VERSION'|awk -F'=' '{print($2)}' )
+          echo "pom_version=${pom_version}"
+          major_version=$(echo ${pom_version}|awk -F'.' '{print($1)}')
+          minor_version=$(echo ${pom_version}|awk -F'.' '{print($2)}')
+          cur_build_version=$(echo ${pom_version}|awk -F'.' '{print($3)}')
+          ((cur_build_version=cur_build_version+0))
+          ((new_build_version=cur_build_version+1))
+          pom_new_version="${major_version}.${minor_version}.${new_build_version}"
+          echo "BUILD_VERSION=${new_build_version}" > version_control.txt
+          echo "POM_VERSION=${pom_new_version}" >> version_control.txt
+          echo "IMAGE_VERSION=${pom_new_version}" >> version_control.txt
+
+    - name: Upload version artifact
+      uses: actions/upload-artifact@v1
+      with:
+         name: version
+         path: version_control.txt
+          
