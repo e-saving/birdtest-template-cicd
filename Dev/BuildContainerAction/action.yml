@@ -12,7 +12,7 @@ inputs:
     default: 'master'
   gitops_token:
     descriptions: "GitOps Repository PAT"
-    required: true    
+    required: true
   gitops_app_name: 
     descriptions: "GitOps Application Name as home directory name that manage configution"
     required: false
@@ -23,7 +23,16 @@ inputs:
     default: develop
   github_token: 
     descriptions: "GitHub PAT"
-    required: true    
+    required: true
+  sonar_host_url: 
+    descriptions: "SonarQube Host URL"
+    required: false
+    default: http://20.187.187.182:9000/
+  sonar_token: 
+    descriptions: "SonarQube Token"
+    required: false
+    default: 01415c3ad9dc5cde2f3dd5cde9d005f5cd2c6be5
+    
     
 #outputs:
 #  pom_app_version:
@@ -114,3 +123,19 @@ runs:
         #tags: # optional
         # Directory to change to before pushing.
         directory: project_src/badges
+        
+    - name: Scan Source Code Quality (SonarQube)
+      shell: bash
+      run: |
+          echo "Scan Source Code Quality (SonarQube)"
+          app_name=$(cat version/version_control.txt|grep '^APP_NAME'|awk -F'=' '{print($2)}')
+          cd project_src
+          mvn sonar:sonar -Dsonar.projectKey=${app_name} -Dsonar.host.url=${{ inputs.sonar_host_url }} -Dsonar.login=${{ inputs.sonar_token }}
+      
+    - name: Check Code Quality Gate (SonarQube)
+      uses: SonarSource/sonarqube-quality-gate-action@v1.0.0
+      timeout-minutes: 5
+      env:
+       SONAR_TOKEN: ${{ input.sonar_token }}
+      with:
+        scanMetadataReportFile: project_src/target/sonar/report-task.txt
