@@ -16,10 +16,13 @@ runs:
   using: "composite"
   steps:
     - name: Run Step#1
+      shell: bash
       run: echo ${{inputs.param_1}}
   
     - name: Run Step#2
+      shell: bash
       run: echo ${{inputs.param_2}}
       
     - name: Run Step#3
+      shell: bash
       run: echo ${{inputs.param_3}}
