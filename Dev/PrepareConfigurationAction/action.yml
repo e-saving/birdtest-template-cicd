@@ -2,7 +2,7 @@ name: "Prepare Configuration"
 description: "Prepare Configuration"
 
 inputs:
-  config_type:
+  param_1:
     descriptions: "Param#1"
     required: true
   param_2:
