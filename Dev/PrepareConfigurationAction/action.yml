@@ -25,13 +25,13 @@ inputs:
     descriptions: "GitHub PAT"
     required: true    
     
-outputs:
-  pom_app_version:
-    description: "version number from pom.xml"
-    value: ${{ steps.pom_dat.outputs.version }}
-  pom_app_name:
-    description: "version number from pom.xml"
-    value: ${{ steps.pom_dat.outputs.name }}
+#outputs:
+#  pom_app_version:
+#    description: "version number from pom.xml"
+#    value: ${{ steps.pom_dat.outputs.version }}
+#  pom_app_name:
+#    description: "version number from pom.xml"
+#    value: ${{ steps.pom_dat.outputs.name }}
     
 runs:
   using: "composite"
@@ -49,7 +49,7 @@ runs:
     #      git switch ${{ env.SOURCECODE_MANAGE_BRANCH }}
     
     - name: Get version
-      id: pom_dat
+      #id: pom_dat
       shell: bash
       run: |
           echo "Get version"
@@ -59,8 +59,8 @@ runs:
           mvn help:evaluate -Dexpression=project.version -q -DforceStdout
           POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           POM_NAME=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout)
-          echo "::set-output name=version::$POM_VERSION"
-          echo "::set-output name=name::$POM_NAME"
+          #echo "::set-output name=version::$POM_VERSION"
+          #echo "::set-output name=name::$POM_NAME"
           echo "POM_APP_VERSION=$POM_VERSION"
           echo "POM_APP_NAME=$POM_NAME"
           echo "POM_APP_VERSION=$POM_VERSION" > ../pom_data.txt     
