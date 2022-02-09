@@ -62,6 +62,7 @@ runs:
     - name: Check version number
       shell: bash
       run: |
+        echo "Check version number"
         img_version=$(cat version/version_control.txt|grep '^IMAGE_VERSION'|awk -F'=' '{print($2)}')
         echo "img_version is ${img_version}"
         #echo "IMAGE_VERSION=${img_version} " >> $GITHUB_ENV
@@ -69,16 +70,18 @@ runs:
     - name: Build and Unit Testing with Maven
       shell: bash
       run: |
+          echo "Build and Unit Testing with Maven"
           cd project_src
           if [[ -d badges ]]
           then
             rm -Rf badges
           fi
           mkdir -p badges
-          ls -l badges
+          ls -l
+          ls -l badges/
           #mvn package -Pcoverage
           java -version
-          mvn package            
+          mvn package
           ls -l badges/
           ls -l target/
           ls -l target/site/jacoco/
