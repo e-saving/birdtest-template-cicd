@@ -2,21 +2,6 @@ name: "Build Container"
 description: "Build Container"
 
 inputs:
-  gitops_repo:
-    descriptions: "GitOps Repository in GitHub"
-    required: false
-    default: 'e-saving/gitops_deployment'
-  gitops_manage_branch:
-    descriptions: "GitOps Repository Branch"
-    required: false
-    default: 'master'
-  gitops_token:
-    descriptions: "GitOps Repository PAT"
-    required: true
-  gitops_app_name: 
-    descriptions: "GitOps Application Name as home directory name that manage configution"
-    required: false
-    default: default
   sourcecode_manage_branch: 
     descriptions: "Project source code repository branch"
     required: false
