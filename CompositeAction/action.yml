@@ -1,0 +1,25 @@
+name: "Demo Composite Action"
+description: "Demo Composite Action"
+
+inputs:
+  param_1:
+    descriptions: "Param#1"
+    required: true
+  param_2:
+    descriptions: "Param#2"
+    required: true
+  param_3:
+    descriptions: "Param#3"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Run Step#1
+      run: echo ${{inputs.param_1}}
+  
+    - name: Run Step#2
+      run: echo ${{inputs.param_2}}
+      
+    - name: Run Step#3
+      run: echo ${{inputs.param_3}}
