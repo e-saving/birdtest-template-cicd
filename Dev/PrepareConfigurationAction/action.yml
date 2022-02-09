@@ -21,6 +21,14 @@ inputs:
     descriptions: "Param#6"
     required: true
     
+outputs:
+  pom_app_version:
+    description: "version number from pom.xml"
+    value: ${{ steps.pom_dat.outputs.version }}
+  pom_app_name:
+    description: "version number from pom.xml"
+    value: ${{ steps.pom_dat.outputs.name }}
+    
 runs:
   using: "composite"
   steps:
@@ -43,16 +51,21 @@ runs:
     #      cd ${{ env.SOURCECODE_HOME_PATH }}
     #      git switch ${{ env.SOURCECODE_MANAGE_BRANCH }}
     
-    - name: Get POM Version
-      uses: avides/actions-project-version-check@v1.2.1
-      id: test
-      with:
-        token: ${{ inputs.github_token }}
-        file-to-check: project_src/pom.xml
+    - name: Get version
+      id: pom_dat
+      shell: bash
+      run: |
+          cd project_src
+          POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          POM_NAME=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout)
+          echo "::set-output name=version::$POM_VERSION"
+          echo "::set-output name=name::$POM_NAME"
+          echo "POM_APP_VERSION=$POM_VERSION" >> $GITHUB_ENV
+          echo "POM_APP_NAME=$POM_NAME" >> $GITHUB_ENV
 
-    #- name: use-version-from-check
-    #  shell: bash
-    #  run: echo "New version is: " ${{ steps.test.outputs.version }}
+    - name: use-version-from-check
+      shell: bash
+      run: echo "New version is: " ${{ env.POM_APP_NAME }}  ${{ env.POM_APP_VERSION }} 
 
 
 
