@@ -17,7 +17,9 @@ inputs:
   sourcecode_manage_branch: 
     descriptions: "Param#5"
     required: true
-    
+  github_token: 
+    descriptions: "Param#6"
+    required: true
     
 runs:
   using: "composite"
@@ -45,7 +47,7 @@ runs:
       uses: avides/actions-project-version-check@latest
       id: test
       with:
-        token: ${{ inputs.gitops_token }}
+        token: ${{ inputs.github_token }}
         file-to-check: project_src/pom.xml
 
     - name: use-version-from-check
