@@ -45,7 +45,7 @@ runs:
       uses: avides/actions-project-version-check@latest
       id: actions_project_version_check
       with:
-        token: ${{ secrets.gitops_token }}
+        token: ${{ inputs.gitops_token }}
         file-to-check: project_src/pom.xml
 
     - name: use-version-from-check
