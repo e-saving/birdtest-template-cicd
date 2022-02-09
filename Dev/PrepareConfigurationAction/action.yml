@@ -1,0 +1,41 @@
+name: "Prepare Configuration"
+description: "Prepare Configuration"
+
+inputs:
+  config_type:
+    descriptions: "Param#1"
+    required: true
+  param_2:
+    descriptions: "Param#2"
+    required: true
+  param_3:
+    descriptions: "Param#3"
+    required: true
+    
+env: 
+  GITOPS_MANAGE_BRANCH: develop
+  GITOPS_MANAGE_HOME_PATH: api-demo-java8
+  GITOPS_REPO:  e-saving/gitops_deployment 
+  GITOPS_TOKEN: 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
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout GitOps Repo
+      uses: actions/checkout@v2.4.0
+      with:
+        repository: ${{ env.GITOPS_REPO }}
+        ref: ${{ env.GITOPS_MANAGE_BRANCH }}
+        token: ${{ env.GITOPS_TOKEN }}
+        path: manage_gitops
+      
+     - name: Geneate new Build Number
+       run: |
+          cd manage_gitops/${{ env.GITOPS_MANAGE_HOME_PATH }}
+          cur_build_number=$(cat version_control.txt|grep '^BUILD_VERSION'|awk -F'=' '{print($2)}')
+          echo "cur_build_number=${cur_build_number}"
+          ((new_build_number=cur_build_number+1))
+          echo "new_build_number=${new_build_number}"
+          echo "BUILD_VERSION=${new_build_number}" > version_control.txt
+          echo "BUILD_VERSION=${new_build_number} " >> $GITHUB_ENV
+      
