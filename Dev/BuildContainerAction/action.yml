@@ -68,7 +68,7 @@ runs:
         #echo "IMAGE_VERSION=${img_version} " >> $GITHUB_ENV
         
     - name: Build and Unit Testing with Maven
-      shell: bash
+      shell: ksh
       run: |
           echo "Build and Unit Testing with Maven"
           cd project_src
@@ -81,6 +81,7 @@ runs:
           ls -l badges/
           #mvn package -Pcoverage
           java -version
+          mvn clean
           mvn package
           ls -l badges/
           ls -l target/
