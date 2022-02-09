@@ -78,12 +78,10 @@ runs:
           fi
           mkdir -p badges
           ls -l
-          ls -l badges/
           #mvn package -Pcoverage
           java -version
           mvn clean
           mvn package
-          ls -l badges/
           ls -l target/
           ls -l target/site/jacoco/
             
@@ -100,3 +98,19 @@ runs:
       with:
         name: unit-test-report
         path: project_src/target/site/jacoco/
+        
+    - name: GitHub Push      
+      uses: ad-m/github-push-action@v0.6.0
+      with:
+        # Token for the repo. Can be passed in using $\{{ secrets.GITHUB_TOKEN }}
+        github_token: ${{ inputs.github_token }}
+        # Repository name to push. Default or empty value represents current github repository (${GITHUB_REPOSITORY})
+        repository: # optional, default is 
+        # Destination branch to push changes
+        branch: ${{ inputs.sourcecode_manage_branch }}
+        # Determines if force push is used
+        #force: # optional
+        # Determines if --tags is used
+        #tags: # optional
+        # Directory to change to before pushing.
+        directory: project_src/badges
