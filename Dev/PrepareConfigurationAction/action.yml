@@ -65,7 +65,7 @@ runs:
 
     - name: use-version-from-check
       shell: bash
-      run: echo "New version is: " ${POM_VERSION}  ${POM_NAME} 
+      run: echo "New version is: " ${{pom_dat.outputs.version}}
 
 
 
