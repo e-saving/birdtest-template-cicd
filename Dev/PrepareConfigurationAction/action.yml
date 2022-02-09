@@ -72,6 +72,7 @@ runs:
       run: |
           echo "Generate new version"
           cat pom_data.txt
+          pom_app_name=$(cat pom_data.txt|grep '^POM_APP_NAME'|awk -F'=' '{print($2)}' )
           pom_version=$(cat pom_data.txt|grep '^POM_APP_VERSION'|awk -F'=' '{print($2)}' )
           echo "pom_version=${pom_version}"
           major_version=$(echo ${pom_version}|awk -F'.' '{print($1)}')
@@ -82,6 +83,7 @@ runs:
           pom_new_version="${major_version}.${minor_version}.${new_build_version}"
           echo "BUILD_VERSION=${new_build_version}" > version_control.txt
           echo "POM_VERSION=${pom_new_version}" >> version_control.txt
+          echo "APP_NAME=${pom_app_name}" >> version_control.txt
           echo "IMAGE_VERSION=${pom_new_version}" >> version_control.txt
 
     - name: Upload version artifact
