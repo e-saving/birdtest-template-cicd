@@ -52,7 +52,7 @@ runs:
 
     #- name: use-version-from-check
     #  shell: bash
-      run: echo "New version is: " ${{ steps.test.outputs.version }}
+    #  run: echo "New version is: " ${{ steps.test.outputs.version }}
 
 
 
