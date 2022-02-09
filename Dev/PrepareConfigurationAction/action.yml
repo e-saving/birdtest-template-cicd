@@ -50,7 +50,7 @@ runs:
 
     - name: use-version-from-check
       shell: bash
-      run: echo "New version is: " ${{ steps.actions_project_version_check.outputs.version }}
+      run: echo "New version is: " ${{ actions_project_version_check.outputs.version }}
 
 
 
