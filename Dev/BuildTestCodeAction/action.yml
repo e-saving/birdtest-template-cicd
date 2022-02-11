@@ -1,0 +1,172 @@
+name: "Build Container"
+description: "Build Container"
+
+inputs:
+  sourcecode_manage_branch: 
+    descriptions: "Project source code repository branch"
+    required: false
+    default: develop
+  github_token: 
+    descriptions: "GitHub PAT"
+    required: true
+  sonar_host_url: 
+    descriptions: "SonarQube Host URL"
+    required: false
+    default: http://20.187.187.182:9000/
+  sonar_token: 
+    descriptions: "SonarQube Token"
+    required: false
+    default: 01415c3ad9dc5cde2f3dd5cde9d005f5cd2c6be5
+  acr_registry_server: 
+    descriptions: "ACR Registry Server"
+    required: false
+    default: gableesaving.azurecr.io
+  acr_user: 
+    descriptions: "ACR Login User"
+    required: false
+    default: gableesaving    
+  acr_password: 
+    descriptions: "ACR Login password"
+    required: true
+    
+    
+#outputs:
+#  pom_app_version:
+#    description: "version number from pom.xml"
+#    value: ${{ steps.pom_dat.outputs.version }}
+#  pom_app_name:
+#    description: "version number from pom.xml"
+#    value: ${{ steps.pom_dat.outputs.name }}
+    
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout Source Code
+      uses: actions/checkout@v2.4.0
+      with:        
+        ref: ${{ inputs.sourcecode_manage_branch }}
+        path: project_src
+        
+    #- name: Checkout Source Code
+    #  run: |
+    #      git clone https://${{ secrets.GITLAB_USERNAME }}:${{ secrets.GITLAB_TOKEN }}@${{ env.GITLAB_REPO }}
+    #      cd ${{ env.SOURCECODE_HOME_PATH }}
+    #      git switch ${{ env.SOURCECODE_MANAGE_BRANCH }}
+        
+    - name: Set up JDK 11
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+        
+    - name: Download version artifact
+      uses: actions/download-artifact@v1
+      with:
+        name: version
+
+    - name: Check version number
+      shell: bash
+      run: |
+        echo "Check version number"
+        img_version=$(cat version/version_control.txt|grep '^IMAGE_VERSION'|awk -F'=' '{print($2)}')
+        app_name=$(cat version/version_control.txt|grep '^APP_NAME'|awk -F'=' '{print($2)}')
+        echo "IMAGE_VERSION=${img_version}" >> $GITHUB_ENV
+        echo "APP_NAME=${app_name}" >> $GITHUB_ENV
+        
+    - name: Build and Unit Testing with Maven
+      shell: bash
+      run: |
+          echo "Build and Unit Testing with Maven"
+          cd project_src
+          if [[ -d badges ]]
+          then
+            rm -Rf badges
+          fi
+          mkdir -p badges
+          ls -l
+          #mvn package -Pcoverage
+          java -version
+          mvn clean
+          mvn package
+          ls -l target/
+          ls -l target/site/jacoco/
+            
+    - name: Generate Unit Test Result (JaCoCo)
+      uses: cicirello/jacoco-badge-generator@v2
+      with:
+        badges-directory: project_src/badges
+        jacoco-csv-file: project_src/target/site/jacoco/jacoco.csv
+        generate-branches-badge: true
+        generate-summary: true
+           
+    - name: Upload Unit Test Coverage Report (JaCoCo)
+      uses: actions/upload-artifact@v2
+      with:
+        name: unit-test-report
+        path: project_src/target/site/jacoco/
+        
+    - name: GitHub Push      
+      uses: ad-m/github-push-action@v0.6.0
+      with:
+        # Token for the repo. Can be passed in using $\{{ secrets.GITHUB_TOKEN }}
+        github_token: ${{ inputs.github_token }}
+        # Repository name to push. Default or empty value represents current github repository (${GITHUB_REPOSITORY})
+        repository: # optional, default is 
+        # Destination branch to push changes
+        branch: ${{ inputs.sourcecode_manage_branch }}
+        # Determines if force push is used
+        #force: # optional
+        # Determines if --tags is used
+        #tags: # optional
+        # Directory to change to before pushing.
+        directory: project_src/badges
+        
+    - name: Scan Source Code Quality (SonarQube)
+      shell: bash
+      run: |
+          echo "Scan Source Code Quality (SonarQube)"          
+          cd project_src
+          mvn sonar:sonar -Dsonar.projectKey=${{env.APP_NAME}} -Dsonar.host.url=${{ inputs.sonar_host_url }} -Dsonar.login=${{ inputs.sonar_token }}
+      
+    - name: Check Code Quality Gate (SonarQube)
+      uses: SonarSource/sonarqube-quality-gate-action@v1.0.0
+      #timeout-minutes: 5
+      env:
+       SONAR_TOKEN: ${{ inputs.sonar_token }}
+      with:
+        scanMetadataReportFile: project_src/target/sonar/report-task.txt
+        
+    - name: Log in to Azure Container Registry (ACR)
+      uses: azure/docker-login@v1
+      with:
+          login-server: ${{ inputs.acr_registry_server }}
+          username: ${{ inputs.acr_user }}
+          password: ${{ inputs.acr_password }}
+
+    - name: Build and Push Container Image (ACR)
+      shell: bash
+      run: |
+          echo "Build and Push Container Image (ACR)"      
+          cd project_src
+          ls -l
+          docker build . -t ${{ inputs.acr_registry_server }}/${{env.APP_NAME}}:${{env.IMAGE_VERSION}}
+          docker push ${{ inputs.acr_registry_server }}/${{env.APP_NAME}}:${{env.IMAGE_VERSION}}
+          
+    - name: Security Scan Container Image (Anchore)
+      uses: anchore/scan-action@b08527d5ae7f7dc76f9621edb6e49eaf47933ccd
+      with:
+        image: "${{ inputs.acr_registry_server }}/${{env.APP_NAME}}:${{env.IMAGE_VERSION}}"
+        # Generate a SARIF report and set the `sarif` output parameter after successful action execution.  This report is compatible with GitHub Automated Code Scanning (ACS), as the artifact to upload for display as a Code Scanning Alert report.
+        acs-report-enable: true
+        # Set this to any value to enable verbose debug output
+        #debug: # optional, default is false
+        # Set to false to avoid failing based on severity-cutoff. Default is to fail when severity-cutoff is reached (or surpassed)
+        fail-build: false # optional, default is true      
+        # Optionally specify the minimum vulnerability severity to trigger an "error" level ACS result.  Valid choices are "negligible", "low", "medium", "high" and "critical".  Any vulnerability with a severity less than this value will lead to a "warning" result.  Default is "medium".
+        #severity-cutoff: critical # optional, default is medium (critical)
+
+    - name: Upload Container Image Scan Report (Anchore)
+      uses: github/codeql-action/upload-sarif@v1
+      with:
+        sarif_file: results.sarif
+
