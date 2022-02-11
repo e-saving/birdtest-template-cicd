@@ -30,7 +30,7 @@ runs:
     - name: Notify dedicated teams channel
       uses: jdcargile/ms-teams-notification@v1.3
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }} # this will use the runner's token.
+        github-token: ${{ inputs.github_token }} # this will use the runner's token.
         ms-teams-webhook-uri: ${{ inputs.notify_url }}
         notification-summary: ${{inputs.notify_mesg}}
         notification-color: 17a2b8
