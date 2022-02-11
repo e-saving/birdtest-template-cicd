@@ -2,25 +2,16 @@ name: "Prepare Configuration"
 description: "Prepare Configuration"
 
 inputs:
-  gitops_repo:
-    descriptions: "GitOps Repository in GitHub"
-    required: false
-    default: 'e-saving/gitops_deployment'
-  gitops_manage_branch:
-    descriptions: "GitOps Repository Branch"
-    required: false
-    default: 'master'
+  github_token: 
+    descriptions: "GitHub PAT"
+    required: true
   gitops_token:
     descriptions: "GitOps Repository PAT"
     required: true
   gitops_app_name: 
     descriptions: "GitOps Application Name as home directory name that manage configution"
     required: false
-    default: default
-  sourcecode_manage_branch: 
-    descriptions: "Project source code repository branch"
-    required: false
-    default: develop
+    default: default  
   sourcecode_home_path: 
     descriptions: "Source Code Home Path"
     required: false
@@ -29,13 +20,6 @@ inputs:
     descriptions: "Line no. of version record at pom.xml"
     required: false
     default: 13
-  github_token: 
-    descriptions: "GitHub PAT"
-    required: true
-  acr_registry_server: 
-    descriptions: "ACR Registry Server"
-    required: false
-    default: gableesaving.azurecr.io    
     
 #outputs:
 #  pom_app_version:
@@ -55,7 +39,7 @@ runs:
     - name: Checkout Source Code
       uses: actions/checkout@v2.4.0
       with:        
-        ref: ${{ inputs.sourcecode_manage_branch }}
+        ref: ${{ env.sourcecode_manage_branch }}
         path: ${{ inputs.sourcecode_home_path }}
         
     #- name: Set up JDK 8
@@ -122,8 +106,8 @@ runs:
     - name: Checkout GitOps Repo
       uses: actions/checkout@v2.4.0
       with:
-        repository: ${{ inputs.gitops_repo }}
-        ref: ${{ inputs.gitops_manage_branch }}
+        repository: ${{ env.gitops_repo }}
+        ref: ${{ env.gitops_manage_branch }}
         token: ${{ inputs.gitops_token }}
         path: manage_gitops
         
