@@ -18,6 +18,19 @@ runs:
       shell: bash
       run: |
         echo "Notification : ${{inputs.notify_mesg}}"
+        echo "Repository : ${{ github.repository }}"
+        echo "Commit Ref : ${{ github.sha }}"
+        echo "Run Number : ${{ github.run_number }}"
+        echo "Actor : ${{ github.actor }}"
+        
+         
        
   
-
+    #- name: Notify dedicated teams channel
+    #  uses: jdcargile/ms-teams-notification@v1.3
+    #  with:
+    #    github-token: ${{ github.token }} # this will use the runner's token.
+    #    ms-teams-webhook-uri: ${{ env.MS_TEAM_URL }}
+    #    notification-summary: Your custom notification message 
+    #    notification-color: 17a2b8
+    #    timezone: Asia/Bangkok
