@@ -2,17 +2,14 @@ name: "Build Test Source Code"
 description: "Build Test Source Code"
 
 inputs:
-  sourcecode_manage_branch: 
-    descriptions: "Project source code repository branch"
-    required: false
-    default: develop
+  github_token: 
+    descriptions: "GitHub PAT"
+    required: true
   sourcecode_home_path: 
     descriptions: "Source Code Home Path"
     required: false
     default: project_src
-  github_token: 
-    descriptions: "GitHub PAT"
-    required: true
+
     
 runs:
   using: "composite"
@@ -78,7 +75,7 @@ runs:
         # Repository name to push. Default or empty value represents current github repository (${GITHUB_REPOSITORY})
         repository: # optional, default is 
         # Destination branch to push changes
-        branch: ${{ inputs.sourcecode_manage_branch }}
+        branch: ${{ env.sourcecode_manage_branch }}
         # Determines if force push is used
         #force: # optional
         # Determines if --tags is used
