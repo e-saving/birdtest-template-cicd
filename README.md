@@ -1,1 +1,2 @@
 # birdtest-template-cicd
+test
