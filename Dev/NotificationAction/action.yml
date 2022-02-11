@@ -1,52 +1,23 @@
-name: "Code Quality Scan"
-description: "Code Quality Scan"
+name: "Notification"
+description: "Notification"
 
 inputs:
-  sourcecode_manage_branch: 
-    descriptions: "Project source code repository branch"
-    required: false
-    default: develop
-  sourcecode_home_path: 
-    descriptions: "Source Code Home Path"
-    required: false
-    default: project_src    
-  github_token: 
-    descriptions: "GitHub PAT"
-    required: true
-  sonar_host_url: 
-    descriptions: "SonarQube Host URL"
-    required: false
-    default: http://20.187.187.182:9000/
-  sonar_token: 
-    descriptions: "SonarQube Token"
+  notify_token: 
+    descriptions: "Notify Token"
     required: false
     default: 01415c3ad9dc5cde2f3dd5cde9d005f5cd2c6be5
-
+  notify_mesg: 
+    descriptions: "Notify Message"
+    required: true
+    
    
 runs:
   using: "composite"
   steps:
-    - name: Check version number
+    - name: Notification
       shell: bash
       run: |
-        echo "Check version number"
-        img_version=$(cat version/version_control.txt|grep '^IMAGE_VERSION'|awk -F'=' '{print($2)}')
-        app_name=$(cat version/version_control.txt|grep '^APP_NAME'|awk -F'=' '{print($2)}')
-        echo "IMAGE_VERSION=${img_version}" >> $GITHUB_ENV
-        echo "APP_NAME=${app_name}" >> $GITHUB_ENV
-        
-    - name: Scan Source Code Quality (SonarQube)
-      shell: bash
-      run: |
-          echo "Scan Source Code Quality (SonarQube)"          
-          cd ${{ inputs.sourcecode_home_path }}
-          mvn sonar:sonar -Dsonar.projectKey=${{env.APP_NAME}} -Dsonar.host.url=${{ inputs.sonar_host_url }} -Dsonar.login=${{ inputs.sonar_token }}
-      
-    - name: Check Code Quality Gate (SonarQube)
-      uses: SonarSource/sonarqube-quality-gate-action@v1.0.0
-      #timeout-minutes: 5
-      env:
-       SONAR_TOKEN: ${{ inputs.sonar_token }}
-      with:
-        scanMetadataReportFile: ${{ inputs.sourcecode_home_path }}/target/sonar/report-task.txt
+        echo "Notification : ${{inputs.notify_mesg}}"
+       
+  
 
