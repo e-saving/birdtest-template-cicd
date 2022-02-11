@@ -26,7 +26,7 @@ runs:
     - name: Build and Unit Testing with Maven
       shell: bash
       run: |
-          echo "Build and Unit Testing with Maven"
+          echo "Build and Unit Testing with Maven"          
           cd ${{ inputs.sourcecode_home_path }}
           if [[ -d badges ]]
           then
@@ -77,4 +77,4 @@ runs:
       if: ${{ failure() }}
       with:
         #github_token: ${{ secrets.GITHUB_TOKEN }}
-        notify_mesg: "Build Test Source Code Failure Notification"
+        notify_mesg: "Build Test Source Code Failure Notification ${{ github.sha }}, ${{ github.run_number }}"
