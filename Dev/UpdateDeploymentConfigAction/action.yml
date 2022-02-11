@@ -1,5 +1,5 @@
-name: "Prepare Configuration"
-description: "Prepare Configuration"
+name: "Update and Commit Deployment Configuration"
+description: "Update and Commit Deployment Configuration"
 
 inputs:
   gitops_repo:
@@ -43,18 +43,20 @@ runs:
 
     - run: echo "STEP_NAME=Checkout Source Code" >> $GITHUB_ENV
       shell: bash
+
+    - name: Checkout GitOps Repo
+      uses: actions/checkout@v2.4.0
+      with:
+        repository: ${{ inputs.gitops_repo }}
+        ref: ${{ inputs.gitops_manage_branch }}
+        token: ${{ inputs.gitops_token }}
+        path: manage_gitops
       
     - name: Checkout Source Code
       uses: actions/checkout@v2.4.0
       with:        
         ref: ${{ inputs.sourcecode_manage_branch }}
-        path: ${{ inputs.sourcecode_home_path }}
-        
-    #- name: Set up JDK 8
-    #  uses: actions/setup-java@v2
-    #  with:
-    #    java-version: '8'
-    #    distribution: 'adopt'
+        path: ${{ inputs.sourcecode_home_path }}    
   
     #- name: Checkout Source Code
     #  run: |
