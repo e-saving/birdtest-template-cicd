@@ -39,6 +39,7 @@ runs:
       with:
         github_token: ${{ inputs.github_token }}
         branch: ${{ env.sourcecode_manage_branch }}
+        directory: ${{ inputs.sourcecode_home_path }}
         #tags: xxx
 
     - run: echo "STEP_NAME=Commit and push version control file (GitOps Repo)" >> $GITHUB_ENV
