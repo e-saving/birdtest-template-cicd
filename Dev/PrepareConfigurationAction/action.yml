@@ -98,6 +98,7 @@ runs:
           sed -i ${{ inputs.pom_line_number }}"s/<version>${pom_version}<\/version>/<version>${pom_new_version}<\/version>/" ${{ inputs.sourcecode_home_path }}/pom.xml
           cp ${{ inputs.sourcecode_home_path }}/pom.xml version/
           echo "APP_NAME=${pom_app_name}" >> $GITHUB_ENV
+          echo "POM_VERSION=${pom_new_version}" >> $GITHUB_ENV
           echo "IMAGE_VERSION=${pom_new_version}" >> $GITHUB_ENV  
           
     - run: echo "STEP_NAME=Checkout GitOps Repo" >> $GITHUB_ENV
