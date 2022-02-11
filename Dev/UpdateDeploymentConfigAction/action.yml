@@ -50,7 +50,7 @@ runs:
     - name: Commit and push version control file (GitOps Repo)
       uses: dmnemec/copy_file_to_another_repo_action@main
       env:
-        API_TOKEN_GITHUB: ${{ input.gitops_token }}
+        API_TOKEN_GITHUB: ${{ inputs.gitops_token }}
       with:
         source_file: version/version_control.txt
         destination_repo: ${{ env.gitops_repo }}
@@ -66,7 +66,7 @@ runs:
     - name: Commit and push deployment configuration (Helm)
       uses: dmnemec/copy_file_to_another_repo_action@main
       env:
-         API_TOKEN_GITHUB: ${{ secrets.GITOPS_TOKEN }}
+         API_TOKEN_GITHUB: ${{ inputs.gitops_token }}
       with:
          source_file: version/values.yaml
          destination_repo: ${{ env.gitops_repo }}
