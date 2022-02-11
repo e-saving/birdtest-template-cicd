@@ -42,9 +42,10 @@ runs:
           cd manage_gitops/environment/develop
           cat variable.properties | while read line
           do
-            echo "${line}" >> ${GITHUB_ENV}
-            echo "${line}"
-          done    
+            echo "${line}" >> ${GITHUB_ENV}            
+          done
+          echo "gitops_repo=${{ inputs.gitops_repo }}" >> ${GITHUB_ENV}  
+          echo "gitops_manage_branch=${{ inputs.gitops_manage_branch }}" >> ${GITHUB_ENV}
 
     - name: Test Variables
       shell: bash
