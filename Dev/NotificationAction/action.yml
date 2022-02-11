@@ -2,10 +2,10 @@ name: "Notification"
 description: "Notification"
 
 inputs:
-  notify_token: 
-    descriptions: "Notify Token"
+  notify_url: 
+    descriptions: "Notify URL"
     required: false
-    default: 01415c3ad9dc5cde2f3dd5cde9d005f5cd2c6be5
+    default: https://gablegrp.webhook.office.com/webhookb2/dd936596-4bd2-496c-8e78-b5bc1ba6fb8f@45be8033-beb7-4d4b-ab77-608ee11e6449/IncomingWebhook/18653518e0d344f5bd0d0492d54bbe77/89ed1696-cd46-4df0-b79f-ac4bc01308b1
   notify_mesg: 
     descriptions: "Notify Message"
     required: true
@@ -22,15 +22,13 @@ runs:
         echo "Commit Ref : ${{ github.sha }}"
         echo "Run Number : ${{ github.run_number }}"
         echo "Actor : ${{ github.actor }}"
-        
-         
-       
+                 
   
-    #- name: Notify dedicated teams channel
-    #  uses: jdcargile/ms-teams-notification@v1.3
-    #  with:
-    #    github-token: ${{ github.token }} # this will use the runner's token.
-    #    ms-teams-webhook-uri: ${{ env.MS_TEAM_URL }}
-    #    notification-summary: Your custom notification message 
-    #    notification-color: 17a2b8
-    #    timezone: Asia/Bangkok
+    - name: Notify dedicated teams channel
+      uses: jdcargile/ms-teams-notification@v1.3
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }} # this will use the runner's token.
+        ms-teams-webhook-uri: ${{ inputs.notify_url }}
+        notification-summary: ${{inputs.notify_mesg}}
+        notification-color: 17a2b8
+        timezone: Asia/Bangkok
