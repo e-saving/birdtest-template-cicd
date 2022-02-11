@@ -41,9 +41,10 @@ runs:
         branch: ${{ env.sourcecode_manage_branch }}
         #tags: xxx
 
-    - run: |
-      echo "STEP_NAME=Commit and push version control file (GitOps Repo)" >> $GITHUB_ENV
-      echo "GITOPS_MANAGE_HOME_PATH=${{ env.APP_NAME }}" >> $GITHUB_ENV
+    - run: echo "STEP_NAME=Commit and push version control file (GitOps Repo)" >> $GITHUB_ENV
+      shell: bash
+      
+    - run: echo "GITOPS_MANAGE_HOME_PATH=${{ env.APP_NAME }}" >> $GITHUB_ENV
       shell: bash
 
     - name: Commit and push version control file (GitOps Repo)
@@ -62,18 +63,18 @@ runs:
     - run: echo "STEP_NAME=Commit and push deployment configuration (Helm)" >> $GITHUB_ENV
       shell: bash        
           
-      - name: Commit and push deployment configuration (Helm)
-        uses: dmnemec/copy_file_to_another_repo_action@main
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.GITOPS_TOKEN }}
-        with:
-          source_file: version/values.yaml
-          destination_repo: ${{ env.gitops_repo }}
-          destination_folder: ${{ env.GITOPS_MANAGE_HOME_PATH }}
-          destination_branch: ${{ env.gitops_manage_branch }}
-          user_email: 'github_actions@g-able.com'
-          user_name: 'github_actions'
-          commit_message: 'Update new container image version ${{ env.IMAGE_VERSION }} of ${{ env.GITOPS_MANAGE_HOME_PATH }}/values.yaml'
+    - name: Commit and push deployment configuration (Helm)
+      uses: dmnemec/copy_file_to_another_repo_action@main
+      env:
+         API_TOKEN_GITHUB: ${{ secrets.GITOPS_TOKEN }}
+      with:
+         source_file: version/values.yaml
+         destination_repo: ${{ env.gitops_repo }}
+         destination_folder: ${{ env.GITOPS_MANAGE_HOME_PATH }}
+         destination_branch: ${{ env.gitops_manage_branch }}
+         user_email: 'github_actions@g-able.com'
+         user_name: 'github_actions'
+         commit_message: 'Update new container image version ${{ env.IMAGE_VERSION }} of ${{ env.GITOPS_MANAGE_HOME_PATH }}/values.yaml'
          
     - name: "Failure Notification" 
       uses: e-saving/birdtest-template-cicd/Dev/NotificationAction@main
