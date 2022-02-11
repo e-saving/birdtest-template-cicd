@@ -17,11 +17,17 @@ inputs:
 runs:
   using: "composite"
   steps:
+    
+    - run: "STEP_NAME=Download version artifact" >> $GITHUB_ENV
+      shell: bash
 
     - name: Download version artifact
       uses: actions/download-artifact@v1
       with:
         name: version
+        
+    - run: "STEP_NAME=Build and Unit Testing with Maven" >> $GITHUB_ENV
+      shell: bash
         
     - name: Build and Unit Testing with Maven
       shell: bash
@@ -40,6 +46,9 @@ runs:
           mvn package
           ls -l target/
           ls -l target/site/jacoco/
+          
+    - run: "STEP_NAME=Generate Unit Test Result (JaCoCo)" >> $GITHUB_ENV
+      shell: bash
             
     - name: Generate Unit Test Result (JaCoCo)
       uses: cicirello/jacoco-badge-generator@v2
@@ -48,6 +57,9 @@ runs:
         jacoco-csv-file: ${{ inputs.sourcecode_home_path }}/target/site/jacoco/jacoco.csv
         generate-branches-badge: true
         generate-summary: true
+        
+    - run: "STEP_NAME=Upload Unit Test Coverage Report (JaCoCo)" >> $GITHUB_ENV
+      shell: bash
            
     - name: Upload Unit Test Coverage Report (JaCoCo)
       uses: actions/upload-artifact@v2
@@ -55,7 +67,10 @@ runs:
         name: unit-test-report
         path: ${{ inputs.sourcecode_home_path }}/target/site/jacoco/
         
-    - name: GitHub Push      
+    - run: "STEP_NAME=GitHub Push Badges " >> $GITHUB_ENV
+      shell: bash
+        
+    - name: GitHub Push Badges     
       uses: ad-m/github-push-action@v0.6.0
       with:
         # Token for the repo. Can be passed in using $\{{ secrets.GITHUB_TOKEN }}
@@ -77,4 +92,4 @@ runs:
       if: ${{ failure() }}
       with:
         github_token: ${{ inputs.github_token }}
-        notify_mesg: "Build Test Source Code Failure Notification"
+        notify_mesg: "Build Test Source Code Failure at step ${{ env.STEP_NAME }}"
