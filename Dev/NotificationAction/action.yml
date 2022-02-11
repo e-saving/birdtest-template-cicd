@@ -2,6 +2,9 @@ name: "Notification"
 description: "Notification"
 
 inputs:
+  github_token: 
+    descriptions: "GitHub PAT"
+    required: true
   notify_url: 
     descriptions: "Notify URL"
     required: false
