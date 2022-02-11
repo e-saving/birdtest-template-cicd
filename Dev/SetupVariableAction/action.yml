@@ -2,6 +2,9 @@ name: "Setup Variable Configuration"
 description: "Setup Variable Configuration"
 
 inputs:
+  github_token: 
+    descriptions: "GitHub PAT"
+    required: true
   gitops_repo:
     descriptions: "GitOps Repository in GitHub"
     required: false
