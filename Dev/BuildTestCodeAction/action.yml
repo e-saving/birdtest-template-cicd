@@ -87,7 +87,7 @@ runs:
         directory: ${{ inputs.sourcecode_home_path }}/badges
         
         
-    - name: "Build Test Source Code Failure Notification" 
+    - name: "Failure Notification" 
       uses: e-saving/birdtest-template-cicd/Dev/NotificationAction@main
       if: ${{ failure() }}
       with:
