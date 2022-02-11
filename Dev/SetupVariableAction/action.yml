@@ -46,23 +46,11 @@ runs:
           done
           echo "gitops_repo=${{ inputs.gitops_repo }}" >> ${GITHUB_ENV}  
           echo "gitops_manage_branch=${{ inputs.gitops_manage_branch }}" >> ${GITHUB_ENV}
-
-    - name: Test Variables
-      shell: bash
-      run: |
-          echo "Test Variables"
-          echo "acr_registry_server => ${{ env.acr_registry_server }}"
-          echo "acr_user => ${{ env.acr_user }}"
-          echo "acr_password => ${{ env.acr_password }}"
-          echo "sonar_host_url => ${{ env.sonar_host_url }}"
-          echo "sonar_token => ${{ env.sonar_token }}"
-          echo "gitops_repo => ${{ env.gitops_repo }}"
-          echo "gitops_manage_branch => ${{ env.gitops_manage_branch }}"
-
+    
     - name: "Failure Notification" 
       uses: e-saving/birdtest-template-cicd/Dev/NotificationAction@main
       if: ${{ failure() }}
       with:
         github_token: ${{ inputs.github_token }}
-        notify_mesg: "Prepare Configuration Failure at step ${{ env.STEP_NAME }}"
+        notify_mesg: "Setup Variable Configuration Failure at step ${{ env.STEP_NAME }}"
           
