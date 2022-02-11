@@ -11,7 +11,7 @@ inputs:
   sourcecode_home_path: 
     descriptions: "Source Code Home Path"
     required: false
-   default: project_src
+    default: project_src
 
    
 runs:
