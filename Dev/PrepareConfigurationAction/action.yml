@@ -32,6 +32,10 @@ inputs:
   github_token: 
     descriptions: "GitHub PAT"
     required: true
+  acr_registry_server: 
+    descriptions: "ACR Registry Server"
+    required: false
+    default: gableesaving.azurecr.io    
     
 #outputs:
 #  pom_app_version:
@@ -80,7 +84,9 @@ runs:
           POM_NAME=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout)
           #echo "::set-output name=version::$POM_VERSION"
           #echo "::set-output name=name::$POM_NAME"          
-          echo "POM_APP_VERSION=$POM_VERSION" > ../pom_data.txt     
+          echo "POM_APP_VERSION=$POM_VERSION" >> $GITHUB_ENV
+          echo "POM_APP_NAME=$POM_NAME" >> $GITHUB_ENV
+          echo "POM_APP_VERSION=$POM_VERSION" > ../pom_data.txt
           echo "POM_APP_NAME=$POM_NAME" >> ../pom_data.txt
 
     - run: echo "STEP_NAME=Generate new version" >> $GITHUB_ENV
@@ -100,15 +106,48 @@ runs:
           ((cur_build_version=cur_build_version+0))
           ((new_build_version=cur_build_version+1))
           
-          cd ${{ inputs.sourcecode_home_path }}
+          
           pom_new_version="${major_version}.${minor_version}.${new_build_version}"
           mkdir -p version
           echo "BUILD_VERSION=${new_build_version}" > version/version_control.txt
           echo "POM_VERSION=${pom_new_version}" >> version/version_control.txt
           echo "APP_NAME=${pom_app_name}" >> version/version_control.txt
           echo "IMAGE_VERSION=${pom_new_version}" >> version/version_control.txt
-          sed -i ${{ inputs.pom_line_number }}"s/<version>${pom_version}<\/version>/<version>${pom_new_version}<\/version>/" pom.xml  
-          cp pom.xml version/
+          sed -i ${{ inputs.pom_line_number }}"s/<version>${pom_version}<\/version>/<version>${pom_new_version}<\/version>/" ${{ inputs.sourcecode_home_path }}/pom.xml
+          cp ${{ inputs.sourcecode_home_path }}/pom.xml version/
+          
+    - run: echo "STEP_NAME=Checkout GitOps Repo" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Checkout GitOps Repo
+      uses: actions/checkout@v2.4.0
+      with:
+        repository: ${{ inputs.gitops_repo }}
+        ref: ${{ inputs.gitops_manage_branch }}
+        token: ${{ inputs.gitops_token }}
+        path: manage_gitops
+        
+    - run: echo "STEP_NAME=Update gitops configuration" >> $GITHUB_ENV
+      shell: bash
+      
+    - name: Update gitops configuration
+      shell: bash
+      run: |           
+          cd manage_gitops/${{ env.POM_APP_NAME }}
+          image_repo=$(cat values.yaml|grep image|awk -F' ' '{print($2)}')
+          acr_val=$(echo $image_repo|awk -F'/' '{print($1)}')
+          image_val=$(echo $image_repo|awk -F'/' '{print($2)}')
+          image_name=$(echo $image_val|awk -F':' '{print($1)}')
+          image_tag=$(echo $image_val|awk -F':' '{print($2)}')
+          echo "acr_val=${acr_val}"
+          echo "image_val=${image_val}"
+          echo "image_name=${image_name}"
+          echo "image_tag=${image_tag}"
+          new_image_val="${image_name}:${{ env.IMAGE_VERSION }}"
+          new_acr_val="${{ secrets.ACR_DEV_REGISTRY_SERVER }}"
+          sed -i "s/${image_val}/${new_image_val}/g" values.yaml
+          sed -i "s/${acr_val}/${new_acr_val}/g" values.yaml
+          cp values.yaml ../../version/
 
     - run: echo "STEP_NAME=Upload version artifact" >> $GITHUB_ENV
       shell: bash
@@ -117,7 +156,7 @@ runs:
       uses: actions/upload-artifact@v1
       with:
          name: version
-         path: ${{ inputs.sourcecode_home_path }}/version
+         path: version
          #path: version_control.txt
          
     - name: "Failure Notification" 
