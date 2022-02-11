@@ -5,6 +5,9 @@ inputs:
   github_token:
     descriptions: "GitHub PAT"
     required: true
+  gitops_token:
+    descriptions: "GitOps Repository PAT"
+    required: true
   gitops_repo:
     descriptions: "GitOps Repository in GitHub"
     required: false
@@ -13,9 +16,11 @@ inputs:
     descriptions: "GitOps Repository Branch"
     required: false
     default: 'master'
-  gitops_token:
-    descriptions: "GitOps Repository PAT"
-    required: true
+  sourcecode_manage_branch: 
+    descriptions: "Project source code repository branch"
+    required: false
+    default: develop
+
     
 runs:
   using: "composite"
@@ -47,7 +52,7 @@ runs:
           done
           echo "gitops_repo=${{ inputs.gitops_repo }}" >> $GITHUB_ENV 
           echo "gitops_manage_branch=${{ inputs.gitops_manage_branch }}" >> $GITHUB_ENV
-          
+          echo "sourcecode_manage_branch=${{ inputs.sourcecode_manage_branch }}" >> $GITHUB_ENV
     
     - name: "Failure Notification" 
       uses: e-saving/birdtest-template-cicd/Dev/NotificationAction@main
