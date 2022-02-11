@@ -12,7 +12,7 @@ inputs:
     default: project_src
   github_token: 
     descriptions: "GitHub PAT"
-    required: true    
+    required: true
     
 runs:
   using: "composite"
