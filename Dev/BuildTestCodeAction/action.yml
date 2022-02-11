@@ -27,7 +27,7 @@ runs:
       shell: bash
       run: |
           echo "Build and Unit Testing with Maven"
-          cd project_src
+          cd ${{ inputs.sourcecode_home_path }}
           if [[ -d badges ]]
           then
             rm -Rf badges
@@ -44,8 +44,8 @@ runs:
     - name: Generate Unit Test Result (JaCoCo)
       uses: cicirello/jacoco-badge-generator@v2
       with:
-        badges-directory: project_src/badges
-        jacoco-csv-file: project_src/target/site/jacoco/jacoco.csv
+        badges-directory: ${{ inputs.sourcecode_home_path }}/badges
+        jacoco-csv-file: ${{ inputs.sourcecode_home_path }}/target/site/jacoco/jacoco.csv
         generate-branches-badge: true
         generate-summary: true
            
@@ -53,7 +53,7 @@ runs:
       uses: actions/upload-artifact@v2
       with:
         name: unit-test-report
-        path: project_src/target/site/jacoco/
+        path: ${{ inputs.sourcecode_home_path }}/target/site/jacoco/
         
     - name: GitHub Push      
       uses: ad-m/github-push-action@v0.6.0
@@ -69,5 +69,5 @@ runs:
         # Determines if --tags is used
         #tags: # optional
         # Directory to change to before pushing.
-        directory: project_src/badges
+        directory: ${{ inputs.sourcecode_home_path }}/badges
 
