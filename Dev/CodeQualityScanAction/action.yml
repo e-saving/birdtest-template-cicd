@@ -2,41 +2,29 @@ name: "Code Quality Scan"
 description: "Code Quality Scan"
 
 inputs:
-  sourcecode_manage_branch: 
-    descriptions: "Project source code repository branch"
-    required: false
-    default: develop
-  sourcecode_home_path: 
-    descriptions: "Source Code Home Path"
-    required: false
-    default: project_src    
   github_token: 
     descriptions: "GitHub PAT"
     required: true
-  sonar_host_url: 
-    descriptions: "SonarQube Host URL"
+  sourcecode_home_path: 
+    descriptions: "Source Code Home Path"
     required: false
-    default: http://20.187.187.182:9000/
-  sonar_token: 
-    descriptions: "SonarQube Token"
-    required: false
-    default: 01415c3ad9dc5cde2f3dd5cde9d005f5cd2c6be5
+    default: project_src
 
    
 runs:
   using: "composite"
   steps:
-    - run: echo "STEP_NAME=Check version number" >> $GITHUB_ENV
-      shell: bash
+    #- run: echo "STEP_NAME=Check version number" >> $GITHUB_ENV
+    #  shell: bash
       
-    - name: Check version number
-      shell: bash
-      run: |
-        echo "Check version number"
-        img_version=$(cat version/version_control.txt|grep '^IMAGE_VERSION'|awk -F'=' '{print($2)}')
-        app_name=$(cat version/version_control.txt|grep '^APP_NAME'|awk -F'=' '{print($2)}')
-        echo "IMAGE_VERSION=${img_version}" >> $GITHUB_ENV
-        echo "APP_NAME=${app_name}" >> $GITHUB_ENV
+    #- name: Check version number
+    #  shell: bash
+    #  run: |
+    #    echo "Check version number"
+    #    img_version=$(cat version/version_control.txt|grep '^IMAGE_VERSION'|awk -F'=' '{print($2)}')
+    #    app_name=$(cat version/version_control.txt|grep '^APP_NAME'|awk -F'=' '{print($2)}')
+    #    echo "IMAGE_VERSION=${img_version}" >> $GITHUB_ENV
+    #    echo "APP_NAME=${app_name}" >> $GITHUB_ENV
 
     - run: echo "STEP_NAME=Scan Source Code Quality (SonarQube)" >> $GITHUB_ENV
       shell: bash
@@ -46,7 +34,7 @@ runs:
       run: |
           echo "Scan Source Code Quality (SonarQube)"          
           cd ${{ inputs.sourcecode_home_path }}
-          mvn sonar:sonar -Dsonar.projectKey=${{env.APP_NAME}} -Dsonar.host.url=${{ inputs.sonar_host_url }} -Dsonar.login=${{ inputs.sonar_token }}
+          mvn sonar:sonar -Dsonar.projectKey=${{env.APP_NAME}} -Dsonar.host.url=${{ env.sonar_host_url }} -Dsonar.login=${{ env.sonar_token }}
       
     - run: echo "STEP_NAME=Check Code Quality Gate (SonarQube)" >> $GITHUB_ENV
       shell: bash
@@ -55,7 +43,7 @@ runs:
       uses: SonarSource/sonarqube-quality-gate-action@v1.0.0
       #timeout-minutes: 5
       env:
-       SONAR_TOKEN: ${{ inputs.sonar_token }}
+       SONAR_TOKEN: ${{ env.sonar_token }}
       with:
         scanMetadataReportFile: ${{ inputs.sourcecode_home_path }}/target/sonar/report-task.txt
 
