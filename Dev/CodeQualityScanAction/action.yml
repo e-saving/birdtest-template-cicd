@@ -26,6 +26,15 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Check version number
+      shell: bash
+      run: |
+        echo "Check version number"
+        img_version=$(cat version/version_control.txt|grep '^IMAGE_VERSION'|awk -F'=' '{print($2)}')
+        app_name=$(cat version/version_control.txt|grep '^APP_NAME'|awk -F'=' '{print($2)}')
+        echo "IMAGE_VERSION=${img_version}" >> $GITHUB_ENV
+        echo "APP_NAME=${app_name}" >> $GITHUB_ENV
+        
     - name: Scan Source Code Quality (SonarQube)
       shell: bash
       run: |
