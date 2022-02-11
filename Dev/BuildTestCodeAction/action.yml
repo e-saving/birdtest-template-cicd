@@ -77,4 +77,4 @@ runs:
       if: ${{ failure() }}
       with:
         #github_token: ${{ secrets.GITHUB_TOKEN }}
-        notify_mesg: "Build Test Source Code Failure Notification ${{ github.sha }}, ${{ github.run_number }}"
+        notify_mesg: "Build Test Source Code Failure Notification ${{ github.sha }}, ${{ github.run_number }} , ${{ github.actor }}, ${{ github.repository }}"
