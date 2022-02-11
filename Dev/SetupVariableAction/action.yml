@@ -2,7 +2,7 @@ name: "Setup Variable Configuration"
 description: "Setup Variable Configuration"
 
 inputs:
-  github_token: 
+  github_token:
     descriptions: "GitHub PAT"
     required: true
   gitops_repo:
@@ -30,10 +30,11 @@ runs:
         repository: ${{ inputs.gitops_repo }}
         ref: ${{ inputs.gitops_manage_branch }}
         token: ${{ inputs.gitops_token }}
-        path: manage_gitops       
+        path: manage_gitops
+        
 
     - run: echo "STEP_NAME=Setup Variables" >> $GITHUB_ENV
-      shell: bash
+      shell: bash      
     
     - name: Setup Variables
       shell: bash
@@ -42,10 +43,11 @@ runs:
           cd manage_gitops/environment/develop
           cat variable.properties | while read line
           do
-            echo "${line}" >> ${GITHUB_ENV}            
+            echo "${line}" >> $GITHUB_ENV           
           done
-          echo "gitops_repo=${{ inputs.gitops_repo }}" >> ${GITHUB_ENV}  
-          echo "gitops_manage_branch=${{ inputs.gitops_manage_branch }}" >> ${GITHUB_ENV}
+          echo "gitops_repo=${{ inputs.gitops_repo }}" >> $GITHUB_ENV 
+          echo "gitops_manage_branch=${{ inputs.gitops_manage_branch }}" >> $GITHUB_ENV
+          
     
     - name: "Failure Notification" 
       uses: e-saving/birdtest-template-cicd/Dev/NotificationAction@main
