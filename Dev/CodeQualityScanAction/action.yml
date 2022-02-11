@@ -64,4 +64,4 @@ runs:
       if: ${{ failure() }}
       with:
         github_token: ${{ inputs.github_token }}
-        notify_mesg: "Build Test Source Code Failure at step ${{ env.STEP_NAME }}"
+        notify_mesg: "Code Quality Scan Failure at step ${{ env.STEP_NAME }}"
