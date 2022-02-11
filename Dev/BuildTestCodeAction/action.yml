@@ -70,4 +70,11 @@ runs:
         #tags: # optional
         # Directory to change to before pushing.
         directory: ${{ inputs.sourcecode_home_path }}/badges
-
+        
+        
+    - name: "Build Test Source Code Failure Notification" 
+      uses: e-saving/birdtest-template-cicd/Dev/NotificationAction@main
+      if: ${{ !failure() }}
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        notify_mesg: "Build Test Source Code Failure Notification"
