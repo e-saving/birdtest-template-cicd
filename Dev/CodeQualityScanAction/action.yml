@@ -22,15 +22,7 @@ inputs:
     required: false
     default: 01415c3ad9dc5cde2f3dd5cde9d005f5cd2c6be5
 
-    
-#outputs:
-#  pom_app_version:
-#    description: "version number from pom.xml"
-#    value: ${{ steps.pom_dat.outputs.version }}
-#  pom_app_name:
-#    description: "version number from pom.xml"
-#    value: ${{ steps.pom_dat.outputs.name }}
-    
+   
 runs:
   using: "composite"
   steps:
