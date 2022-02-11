@@ -26,6 +26,9 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - run: echo "STEP_NAME=Check version number" >> $GITHUB_ENV
+      shell: bash
+      
     - name: Check version number
       shell: bash
       run: |
@@ -34,13 +37,19 @@ runs:
         app_name=$(cat version/version_control.txt|grep '^APP_NAME'|awk -F'=' '{print($2)}')
         echo "IMAGE_VERSION=${img_version}" >> $GITHUB_ENV
         echo "APP_NAME=${app_name}" >> $GITHUB_ENV
-        
+
+    - run: echo "STEP_NAME=Scan Source Code Quality (SonarQube)" >> $GITHUB_ENV
+      shell: bash
+      
     - name: Scan Source Code Quality (SonarQube)
       shell: bash
       run: |
           echo "Scan Source Code Quality (SonarQube)"          
           cd ${{ inputs.sourcecode_home_path }}
           mvn sonar:sonar -Dsonar.projectKey=${{env.APP_NAME}} -Dsonar.host.url=${{ inputs.sonar_host_url }} -Dsonar.login=${{ inputs.sonar_token }}
+      
+    - run: echo "STEP_NAME=Check Code Quality Gate (SonarQube)" >> $GITHUB_ENV
+      shell: bash
       
     - name: Check Code Quality Gate (SonarQube)
       uses: SonarSource/sonarqube-quality-gate-action@v1.0.0
@@ -50,3 +59,9 @@ runs:
       with:
         scanMetadataReportFile: ${{ inputs.sourcecode_home_path }}/target/sonar/report-task.txt
 
+    - name: "Failure Notification" 
+      uses: e-saving/birdtest-template-cicd/Dev/NotificationAction@main
+      if: ${{ failure() }}
+      with:
+        github_token: ${{ inputs.github_token }}
+        notify_mesg: "Build Test Source Code Failure at step ${{ env.STEP_NAME }}"
