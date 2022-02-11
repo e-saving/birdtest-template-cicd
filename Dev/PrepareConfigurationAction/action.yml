@@ -40,11 +40,15 @@ inputs:
 runs:
   using: "composite"
   steps:
+
+    - run: echo "STEP_NAME=Checkout Source Code" >> $GITHUB_ENV
+      shell: bash
+      
     - name: Checkout Source Code
       uses: actions/checkout@v2.4.0
       with:        
         ref: ${{ inputs.sourcecode_manage_branch }}
-        path: ${{ input.sourcecode_home_path }}
+        path: ${{ inputs.sourcecode_home_path }}
         
     #- name: Set up JDK 8
     #  uses: actions/setup-java@v2
@@ -55,22 +59,29 @@ runs:
     #- name: Checkout Source Code
     #  run: |
     #      git clone https://${{ secrets.GITLAB_USERNAME }}:${{ secrets.GITLAB_TOKEN }}@${{ env.GITLAB_REPO }}
-    #      cd ${{ env.SOURCECODE_HOME_PATH }}
+    #      cd ${{ inputs.sourcecode_home_path }}
     #      git switch ${{ env.SOURCECODE_MANAGE_BRANCH }}
+    
+
+    - run: echo "STEP_NAME=Get version" >> $GITHUB_ENV
+      shell: bash
     
     - name: Get version
       #id: pom_dat
       shell: bash
       run: |
           echo "Get version"
-          cd ${{ input.sourcecode_home_path }}
+          cd ${{ inputs.sourcecode_home_path }}
           POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           POM_NAME=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout)
           #echo "::set-output name=version::$POM_VERSION"
           #echo "::set-output name=name::$POM_NAME"          
           echo "POM_APP_VERSION=$POM_VERSION" > ../pom_data.txt     
           echo "POM_APP_NAME=$POM_NAME" >> ../pom_data.txt
-          
+
+    - run: echo "STEP_NAME=Generate new version" >> $GITHUB_ENV
+      shell: bash
+      
     - name: Generate new version
       shell: bash
       run: |
@@ -90,9 +101,19 @@ runs:
           echo "APP_NAME=${pom_app_name}" >> version_control.txt
           echo "IMAGE_VERSION=${pom_new_version}" >> version_control.txt
 
+    - run: echo "STEP_NAME=Upload version artifact" >> $GITHUB_ENV
+      shell: bash
+      
     - name: Upload version artifact
       uses: actions/upload-artifact@v1
       with:
          name: version
          path: version_control.txt
+         
+    - name: "Failure Notification" 
+      uses: e-saving/birdtest-template-cicd/Dev/NotificationAction@main
+      if: ${{ failure() }}
+      with:
+        github_token: ${{ inputs.github_token }}
+        notify_mesg: "Prepare Configuration Failure at step ${{ env.STEP_NAME }}"
           
