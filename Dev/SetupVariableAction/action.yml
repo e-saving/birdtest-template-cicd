@@ -42,7 +42,19 @@ runs:
             echo "${line}" >> ${GITHUB_ENV}
             echo "${line}"
           done    
-         
+
+    - name: Test Variables
+      shell: bash
+      run: |
+          echo "Test Variables"
+          echo "acr_registry_server => ${{ env.acr_registry_server }}"
+          echo "acr_user => ${{ env.acr_user }}"
+          echo "acr_password => ${{ env.acr_password }}"
+          echo "sonar_host_url => ${{ env.sonar_host_url }}"
+          echo "sonar_token => ${{ env.sonar_token }}"
+          echo "gitops_repo => ${{ env.gitops_repo }}"
+          echo "gitops_manage_branch => ${{ env.gitops_manage_branch }}"
+
     - name: "Failure Notification" 
       uses: e-saving/birdtest-template-cicd/Dev/NotificationAction@main
       if: ${{ failure() }}
