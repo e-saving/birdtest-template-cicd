@@ -54,10 +54,10 @@ runs:
           echo "gitops_manage_branch=${{ inputs.gitops_manage_branch }}" >> $GITHUB_ENV
           echo "sourcecode_manage_branch=${{ inputs.sourcecode_manage_branch }}" >> $GITHUB_ENV
     
-    #- name: "Failure Notification" 
-    #  uses: e-saving/birdtest-template-cicd/Dev/NotificationAction@main
-    #  if: ${{ failure() }}
-    #  with:
-    #    github_token: ${{ inputs.github_token }}
-    #    notify_mesg: "Setup Variable Configuration Failure at step ${{ env.STEP_NAME }}"
+    - name: "Failure Notification" 
+      uses: e-saving/birdtest-template-cicd/Dev/NotificationAction@main
+      if: ${{ failure() }}
+      with:
+        github_token: ${{ inputs.github_token }}
+        notify_mesg: "Setup Variable Configuration Failure at step ${{ env.STEP_NAME }}"
           
