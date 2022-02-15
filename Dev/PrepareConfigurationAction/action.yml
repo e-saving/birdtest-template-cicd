@@ -39,41 +39,31 @@ runs:
 
     - run: echo "STEP_NAME=Checkout Source Code" >> $GITHUB_ENV
       shell: bash
-      
-    - run: echo "Checkout Source Code"
-      shell: bash
-      
+
     - name: Checkout Source Code
       uses: actions/checkout@v2.4.0
-      with:        
+      with:
         ref: ${{ env.sourcecode_manage_branch }}
         path: ${{ inputs.sourcecode_home_path }}
-        
+
     - run: echo "STEP_NAME=Set up JDK ${{inputs.java_version}}" >> $GITHUB_ENV
       shell: bash
-      
-    - run: echo "Set up JDK ${{inputs.java_version}}"
-      shell: bash
-        
+
     - name: Set up JDK ${{inputs.java_version}}
       uses: actions/setup-java@v2
       with:
         java-version: ${{inputs.java_version}}
         distribution: 'adopt'
-  
+
     #- name: Checkout Source Code
     #  run: |
     #      git clone https://${{ secrets.GITLAB_USERNAME }}:${{ secrets.GITLAB_TOKEN }}@${{ env.GITLAB_REPO }}
     #      cd ${{ inputs.sourcecode_home_path }}
     #      git switch ${{ env.SOURCECODE_MANAGE_BRANCH }}
-    
 
     - run: echo "STEP_NAME=Get version" >> $GITHUB_ENV
       shell: bash
 
-    - run: echo "Get version"
-      shell: bash
-    
     - name: Get version
       #id: pom_dat
     #- if: '${{inputs.java_version}}' == '11'
@@ -81,7 +71,7 @@ runs:
       run: |
           echo "Get version"
           cd ${{ inputs.sourcecode_home_path }}
-          if (( "${{inputs.java_version}}" == "11" ))
+          if [[ "${{inputs.java_version}}" == "11" ]]
           then
             POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
             POM_NAME=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout)
@@ -98,11 +88,10 @@ runs:
           #echo "::set-output name=version::$POM_VERSION"
           #echo "::set-output name=name::$POM_NAME"
           cat ../pom_data.txt
- 
 
     - run: echo "STEP_NAME=Generate new version" >> $GITHUB_ENV
       shell: bash
-      
+
     - name: Generate new version
       shell: bash
       run: |
