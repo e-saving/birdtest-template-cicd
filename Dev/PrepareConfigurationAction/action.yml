@@ -71,7 +71,8 @@ runs:
       run: |
           echo "Get version"
           cd ${{ inputs.sourcecode_home_path }}
-          if [[ "${{inputs.java_version}}" == "11" ]] then
+          if [[ "${{inputs.java_version}}" == "11" ]] 
+          then
             #POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
             #POM_NAME=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout)
             #echo "POM_APP_VERSION=$POM_VERSION" > ../pom_data.txt
