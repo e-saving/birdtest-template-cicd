@@ -18,7 +18,7 @@ runs:
   using: "composite"
   steps:
   
-    - run: echo "STEP_NAME=Commit pom.xml files" >> $GITHUB_ENV
+    - run: echo "UPD_STEP_NAME=Commit pom.xml files" >> $GITHUB_ENV
       shell: bash  
   
     - name: Commit pom.xml files
@@ -31,7 +31,7 @@ runs:
         git commit -m "[ci-skip] update pom.xml new version to be ${{ env.POM_VERSION }}"
         #git tag ${{ env.POM_VERSION }}
         
-    - run: echo "STEP_NAME=Push pom.xml changes" >> $GITHUB_ENV
+    - run: echo "UPD_STEP_NAME=Push pom.xml changes" >> $GITHUB_ENV
       shell: bash          
           
     - name: Push pom.xml changes
@@ -43,7 +43,7 @@ runs:
         directory: ${{ inputs.sourcecode_home_path }}
         
 
-    - run: echo "STEP_NAME=Commit and push version control file (GitOps Repo)" >> $GITHUB_ENV
+    - run: echo "UPD_STEP_NAME=Commit and push version control file (GitOps Repo)" >> $GITHUB_ENV
       shell: bash
       
     - run: echo "GITOPS_MANAGE_HOME_PATH=${{ env.APP_NAME }}" >> $GITHUB_ENV
@@ -62,7 +62,7 @@ runs:
         user_name: 'github_actions'
         commit_message: 'Update new container image version ${{ env.IMAGE_VERSION }} of ${{ env.GITOPS_MANAGE_HOME_PATH }}/version_control.txt'          
         
-    - run: echo "STEP_NAME=Commit and push deployment configuration (Helm)" >> $GITHUB_ENV
+    - run: echo "UPD_STEP_NAME=Commit and push deployment configuration (Helm)" >> $GITHUB_ENV
       shell: bash        
           
     - name: Commit and push deployment configuration (Helm)
@@ -83,5 +83,5 @@ runs:
       if: ${{ failure() }}
       with:
         github_token: ${{ inputs.github_token }}
-        notify_mesg: "Update and Commit Deployment Configuration Failure at step ${{ env.STEP_NAME }}"
+        notify_mesg: "Update and Commit Deployment Configuration Failure at step ${{ env.UPD_STEP_NAME }}"
           
