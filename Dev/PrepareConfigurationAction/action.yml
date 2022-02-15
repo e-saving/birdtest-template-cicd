@@ -62,9 +62,9 @@ runs:
     - run: echo "STEP_NAME=Get version" >> $GITHUB_ENV
       shell: bash
     
-    - name: Get version
+    #- name: Get version
       #id: pom_dat
-      if: '${{inputs.java_version}}' == '11'
+    - if: '${{inputs.java_version}}' == '11'
       shell: bash
       run: |
           echo "Get version"
@@ -76,9 +76,9 @@ runs:
           echo "POM_APP_VERSION=$POM_VERSION" > ../pom_data.txt
           echo "POM_APP_NAME=$POM_NAME" >> ../pom_data.txt
           
-    - name: Get version
+    #- name: Get version
       #id: pom_dat
-      if: '${{inputs.java_version}}' == '8'
+    - if: '${{inputs.java_version}}' == '8'
       shell: bash
       run: |
           echo "Get version"
