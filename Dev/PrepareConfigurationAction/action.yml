@@ -89,9 +89,9 @@ runs:
             echo "POM_APP_NAME=$POM_NAME" >> ../pom_data.txt
           else
             POM_VERSION=$(head -${{ inputs.pom_line_number }} pom.xml|tail -1|grep -oPm1 "(?<=<version>)[^<]+")
-            pom_name_line_number=$(echo ${{ inputs.pom_line_number }})
-            ((pom_name_line_number=pom_name_line_number+1))
-            POM_NAME=$(head -${pom_name_line_number} pom.xml|tail -1|grep -oPm1 "(?<=<name>)[^<]+")
+            #pom_name_line_number=$(echo ${{ inputs.pom_line_number }})
+            #((pom_name_line_number=pom_name_line_number+1))
+            POM_NAME=$(head -14 pom.xml|tail -1|grep -oPm1 "(?<=<name>)[^<]+")
             echo "POM_APP_VERSION=$POM_VERSION" > ../pom_data.txt
             echo "POM_APP_NAME=$POM_NAME" >> ../pom_data.txt
           fi
