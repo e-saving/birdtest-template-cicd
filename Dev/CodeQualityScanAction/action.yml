@@ -26,7 +26,7 @@ runs:
     #    echo "IMAGE_VERSION=${img_version}" >> $GITHUB_ENV
     #    echo "APP_NAME=${app_name}" >> $GITHUB_ENV
 
-    - run: echo "STEP_NAME=Scan Source Code Quality (SonarQube)" >> $GITHUB_ENV
+    - run: echo "SQ_STEP_NAME=Scan Source Code Quality (SonarQube)" >> $GITHUB_ENV
       shell: bash
       
     - name: Scan Source Code Quality (SonarQube)
@@ -36,7 +36,7 @@ runs:
           cd ${{ inputs.sourcecode_home_path }}
           mvn sonar:sonar -Dsonar.projectKey=${{env.APP_NAME}} -Dsonar.host.url=${{ env.sonar_host_url }} -Dsonar.login=${{ env.sonar_token }}
       
-    - run: echo "STEP_NAME=Check Code Quality Gate (SonarQube)" >> $GITHUB_ENV
+    - run: echo "SQ_STEP_NAME=Check Code Quality Gate (SonarQube)" >> $GITHUB_ENV
       shell: bash
       
     - name: Check Code Quality Gate (SonarQube)
@@ -52,4 +52,4 @@ runs:
       if: ${{ failure() }}
       with:
         github_token: ${{ inputs.github_token }}
-        notify_mesg: "Code Quality Scan Failure at step ${{ env.STEP_NAME }}"
+        notify_mesg: "Code Quality Scan Failure at step ${{ env.SQ_STEP_NAME }}"
