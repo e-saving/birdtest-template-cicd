@@ -37,10 +37,7 @@ runs:
   using: "composite"
   steps:
 
-    - run: echo "STEP_NAME=Checkout Source Code" >> $GITHUB_ENV
-      shell: bash
-
-    - run: echo "STEP_NAME_TEST=1" >> $GITHUB_ENV
+    - run: echo "PREP_STEP_NAME=Checkout Source Code" >> $GITHUB_ENV
       shell: bash
       
     - name: Checkout Source Code
@@ -49,11 +46,8 @@ runs:
         ref: ${{ env.sourcecode_manage_branch }}
         path: ${{ inputs.sourcecode_home_path }}
 
-    - run: echo "STEP_NAME=Set up JDK ${{inputs.java_version}}" >> $GITHUB_ENV
-      shell: bash
-      
-    - run: echo "STEP_NAME_TEST=2" >> $GITHUB_ENV
-      shell: bash      
+    - run: echo "PREP_STEP_NAME=Set up JDK ${{inputs.java_version}}" >> $GITHUB_ENV
+      shell: bash     
 
     - name: Set up JDK ${{inputs.java_version}}
       uses: actions/setup-java@v2
@@ -67,11 +61,8 @@ runs:
     #      cd ${{ inputs.sourcecode_home_path }}
     #      git switch ${{ env.SOURCECODE_MANAGE_BRANCH }}
 
-    - run: echo "STEP_NAME=Get version" >> $GITHUB_ENV
-      shell: bash
-      
-    - run: echo "STEP_NAME_TEST=3" >> $GITHUB_ENV
-      shell: bash        
+    - run: echo "PREP_STEP_NAME=Get version" >> $GITHUB_ENV
+      shell: bash  
 
     - name: Get version
       #id: pom_dat
@@ -88,28 +79,21 @@ runs:
             echo "POM_APP_VERSION=$POM_VERSION" > ../pom_data.txt
             echo "POM_APP_NAME=$POM_NAME" >> ../pom_data.txt            
           else
-            echo "Get Version for Java 8"
-            pwd
-            ls -l            
-            POM_VERSION=$(head -${{ inputs.pom_line_number }} pom.xml|tail -1|grep -oPm1 "(?<=<version>)[^<]+")
-            POM_VERSION=$(head -13 pom.xml|tail -1|grep -oPm1 "(?<=<version>)[^<]+")
-            #pom_name_line_number=$(echo ${{ inputs.pom_line_number }})
-            #((pom_name_line_number=pom_name_line_number+1))
-            POM_NAME=$(head -14 pom.xml|tail -1|grep -oPm1 "(?<=<name>)[^<]+")
+            echo "Get Version for Java 8"            
+            POM_VERSION=$(head -${{ inputs.pom_line_number }} pom.xml|tail -1|grep -oPm1 "(?<=<version>)[^<]+")            
+            pom_name_line_number=$(echo ${{ inputs.pom_line_number }})
+            ((pom_name_line_number=pom_name_line_number+1))
+            POM_NAME=$(head -${pom_name_line_number} pom.xml|tail -1|grep -oPm1 "(?<=<name>)[^<]+")
             echo "POM_APP_VERSION=$POM_VERSION" > ../pom_data.txt
             echo "POM_APP_NAME=$POM_NAME" >> ../pom_data.txt            
           fi
           #echo "::set-output name=version::$POM_VERSION"
           #echo "::set-output name=name::$POM_NAME"
           cat ../pom_data.txt
-          #cat pom.xml
-          echo "OK"
+          echo "done"
 
-    - run: echo "STEP_NAME=Generate new version" >> $GITHUB_ENV
-      shell: bash
-      
-    - run: echo "STEP_NAME_TEST=4" >> $GITHUB_ENV
-      shell: bash           
+    - run: echo "PREP_STEP_NAME=Generate new version" >> $GITHUB_ENV
+      shell: bash   
 
     - name: Generate new version
       shell: bash
@@ -138,7 +122,7 @@ runs:
           echo "POM_VERSION=${pom_new_version}" >> $GITHUB_ENV
           echo "IMAGE_VERSION=${pom_new_version}" >> $GITHUB_ENV  
           
-    - run: echo "STEP_NAME=Checkout GitOps Repo" >> $GITHUB_ENV
+    - run: echo "PREP_STEP_NAME=Checkout GitOps Repo" >> $GITHUB_ENV
       shell: bash
 
     - name: Checkout GitOps Repo
@@ -149,7 +133,7 @@ runs:
         token: ${{ inputs.gitops_token }}
         path: manage_gitops
         
-    - run: echo "STEP_NAME=Update gitops configuration" >> $GITHUB_ENV
+    - run: echo "PREP_STEP_NAME=Update gitops configuration" >> $GITHUB_ENV
       shell: bash
       
     - name: Update gitops configuration
@@ -171,7 +155,7 @@ runs:
           sed -i "s/${acr_val}/${new_acr_val}/g" values.yaml
           cp values.yaml ../../version/
 
-    - run: echo "STEP_NAME=Upload version artifact" >> $GITHUB_ENV
+    - run: echo "PREP_STEP_NAME=Upload version artifact" >> $GITHUB_ENV
       shell: bash
       
     - name: Upload version artifact
@@ -186,5 +170,5 @@ runs:
       if: ${{ failure() }}
       with:
         github_token: ${{ inputs.github_token }}
-        notify_mesg: "Prepare Configuration Failure at step ${{ env.STEP_NAME }}"
+        notify_mesg: "Prepare Configuration Failure at step ${{ env.PREP_STEP_NAME }}"
           
