@@ -15,7 +15,7 @@ runs:
   using: "composite"
   steps:
     
-    - run: echo "STEP_NAME=Download version artifact" >> $GITHUB_ENV
+    - run: echo "BT_STEP_NAME=Download version artifact" >> $GITHUB_ENV
       shell: bash
 
     - name: Download version artifact
@@ -23,7 +23,7 @@ runs:
       with:
         name: version
         
-    - run: echo "STEP_NAME=Build and Unit Testing with Maven" >> $GITHUB_ENV
+    - run: echo "BT_STEP_NAME=Build and Unit Testing with Maven" >> $GITHUB_ENV
       shell: bash
         
     - name: Build and Unit Testing with Maven
@@ -44,7 +44,7 @@ runs:
           ls -l target/
           ls -l target/site/jacoco/
           
-    - run: echo "STEP_NAME=Generate Unit Test Result (JaCoCo)" >> $GITHUB_ENV
+    - run: echo "BT_STEP_NAME=Generate Unit Test Result (JaCoCo)" >> $GITHUB_ENV
       shell: bash
             
     - name: Generate Unit Test Result (JaCoCo)
@@ -55,7 +55,7 @@ runs:
         generate-branches-badge: true
         generate-summary: true
         
-    - run: echo "STEP_NAME=Upload Unit Test Coverage Report (JaCoCo)" >> $GITHUB_ENV
+    - run: echo "BT_STEP_NAME=Upload Unit Test Coverage Report (JaCoCo)" >> $GITHUB_ENV
       shell: bash
            
     - name: Upload Unit Test Coverage Report (JaCoCo)
@@ -64,7 +64,7 @@ runs:
         name: unit-test-report
         path: ${{ inputs.sourcecode_home_path }}/target/site/jacoco/
         
-    - run: echo "STEP_NAME=GitHub Push Badges " >> $GITHUB_ENV
+    - run: echo "BT_STEP_NAME=GitHub Push Badges " >> $GITHUB_ENV
       shell: bash
         
     - name: GitHub Push Badges     
@@ -89,4 +89,4 @@ runs:
       if: ${{ failure() }}
       with:
         github_token: ${{ inputs.github_token }}
-        notify_mesg: "Build Test Source Code Failure at step ${{ env.STEP_NAME }}"
+        notify_mesg: "Build Test Source Code Failure at step ${{ env.BT_STEP_NAME }}"
