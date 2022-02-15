@@ -40,11 +40,20 @@ runs:
     - run: echo "STEP_NAME=Checkout Source Code" >> $GITHUB_ENV
       shell: bash
       
+    - run: echo "Checkout Source Code"
+      shell: bash
+      
     - name: Checkout Source Code
       uses: actions/checkout@v2.4.0
       with:        
         ref: ${{ env.sourcecode_manage_branch }}
         path: ${{ inputs.sourcecode_home_path }}
+        
+    - run: echo "STEP_NAME=Set up JDK ${{inputs.java_version}}" >> $GITHUB_ENV
+      shell: bash
+      
+    - run: echo "Set up JDK ${{inputs.java_version}}"
+      shell: bash
         
     - name: Set up JDK ${{inputs.java_version}}
       uses: actions/setup-java@v2
@@ -61,6 +70,9 @@ runs:
 
     - run: echo "STEP_NAME=Get version" >> $GITHUB_ENV
       shell: bash
+
+    - run: echo "Get version"
+      shell: bash
     
     - name: Get version
       #id: pom_dat
@@ -72,17 +84,20 @@ runs:
           if (( "${{inputs.java_version}}" == "11" ))
           then
             POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-            POM_NAME=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout)           
+            POM_NAME=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout)
+            echo "POM_APP_VERSION=$POM_VERSION" > ../pom_data.txt
+            echo "POM_APP_NAME=$POM_NAME" >> ../pom_data.txt
           else
             POM_VERSION=$(head -${{ inputs.pom_line_number }} pom.xml|tail -1|grep -oPm1 "(?<=<version>)[^<]+")
             pom_name_line_number=$(echo ${{ inputs.pom_line_number }})
             ((pom_name_line_number=pom_name_line_number+1))
             POM_NAME=$(head -${pom_name_line_number} pom.xml|tail -1|grep -oPm1 "(?<=<name>)[^<]+")
-          fi          
+            echo "POM_APP_VERSION=$POM_VERSION" > ../pom_data.txt
+            echo "POM_APP_NAME=$POM_NAME" >> ../pom_data.txt
+          fi
           #echo "::set-output name=version::$POM_VERSION"
           #echo "::set-output name=name::$POM_NAME"
-          echo "POM_APP_VERSION=$POM_VERSION" > ../pom_data.txt
-          echo "POM_APP_NAME=$POM_NAME" >> ../pom_data.txt
+          cat ../pom_data.txt
  
 
     - run: echo "STEP_NAME=Generate new version" >> $GITHUB_ENV
