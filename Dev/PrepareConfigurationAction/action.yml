@@ -62,35 +62,28 @@ runs:
     - run: echo "STEP_NAME=Get version" >> $GITHUB_ENV
       shell: bash
     
-    #- name: Get version
+    - name: Get version
       #id: pom_dat
-    - if: '${{inputs.java_version}}' == '11'
+    #- if: '${{inputs.java_version}}' == '11'
       shell: bash
       run: |
           echo "Get version"
           cd ${{ inputs.sourcecode_home_path }}
-          POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          POM_NAME=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout)
+          if (( ${{inputs.java_version}}' == '11' ))
+          then
+            POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+            POM_NAME=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout)           
+          else
+            POM_VERSION=$(head -${{ inputs.pom_line_number }} pom.xml|tail -1|grep -oPm1 "(?<=<version>)[^<]+")
+            pom_name_line_number=$(echo ${{ inputs.pom_line_number }})
+            ((pom_name_line_number=pom_name_line_number+1))
+            POM_NAME=$(head -${pom_name_line_number} pom.xml|tail -1|grep -oPm1 "(?<=<name>)[^<]+")
+          fi          
           #echo "::set-output name=version::$POM_VERSION"
           #echo "::set-output name=name::$POM_NAME"
           echo "POM_APP_VERSION=$POM_VERSION" > ../pom_data.txt
           echo "POM_APP_NAME=$POM_NAME" >> ../pom_data.txt
-          
-    #- name: Get version
-      #id: pom_dat
-    - if: '${{inputs.java_version}}' == '8'
-      shell: bash
-      run: |
-          echo "Get version"
-          cd ${{ inputs.sourcecode_home_path }}
-          POM_VERSION=$(head -${{ inputs.pom_line_number }} pom.xml|tail -1|grep -oPm1 "(?<=<version>)[^<]+")
-          pom_name_line_number=$(echo ${{ inputs.pom_line_number }})          
-          ((pom_name_line_number=pom_name_line_number+1))
-          POM_NAME=$(head -${pom_name_line_number} pom.xml|tail -1|grep -oPm1 "(?<=<name>)[^<]+")          
-          #echo "::set-output name=version::$POM_VERSION"
-          #echo "::set-output name=name::$POM_NAME"
-          echo "POM_APP_VERSION=$POM_VERSION" > ../pom_data.txt
-          echo "POM_APP_NAME=$POM_NAME" >> ../pom_data.txt
+ 
 
     - run: echo "STEP_NAME=Generate new version" >> $GITHUB_ENV
       shell: bash
