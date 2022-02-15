@@ -20,6 +20,10 @@ inputs:
     descriptions: "Line no. of version record at pom.xml"
     required: false
     default: 13
+  java_version: 
+    descriptions: "Java Version"
+    required: false
+    default: 11    
     
 #outputs:
 #  pom_app_version:
@@ -42,11 +46,11 @@ runs:
         ref: ${{ env.sourcecode_manage_branch }}
         path: ${{ inputs.sourcecode_home_path }}
         
-    #- name: Set up JDK 8
-    #  uses: actions/setup-java@v2
-    #  with:
-    #    java-version: '8'
-    #    distribution: 'adopt'
+    - name: Set up JDK ${{inputs.java_version}}
+      uses: actions/setup-java@v2
+      with:
+        java-version: ${{inputs.java_version}}
+        distribution: 'adopt'
   
     #- name: Checkout Source Code
     #  run: |
