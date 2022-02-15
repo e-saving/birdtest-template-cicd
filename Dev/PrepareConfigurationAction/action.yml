@@ -74,7 +74,7 @@ runs:
       run: |
           echo "Get version"
           cd ${{ inputs.sourcecode_home_path }}
-          if [[ "${{inputs.java_version}}" == "11" ]] 
+          if [ "${{inputs.java_version}}" == "11" ]
           then
             echo "Get Version for Java 11"
             POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
@@ -86,16 +86,18 @@ runs:
             pwd
             ls -l            
             #POM_VERSION=$(head -${{ inputs.pom_line_number }} pom.xml|tail -1|grep -oPm1 "(?<=<version>)[^<]+")
-            POM_VERSION=$(head -13 pom.xml|tail -1|grep -oPm1 "(?<=<version>)[^<]+")
+            #POM_VERSION=$(head -13 pom.xml|tail -1|grep -oPm1 "(?<=<version>)[^<]+")
             #pom_name_line_number=$(echo ${{ inputs.pom_line_number }})
             #((pom_name_line_number=pom_name_line_number+1))
-            POM_NAME=$(head -14 pom.xml|tail -1|grep -oPm1 "(?<=<name>)[^<]+")
-            echo "POM_APP_VERSION=$POM_VERSION" > ../pom_data.txt
-            echo "POM_APP_NAME=$POM_NAME" >> ../pom_data.txt            
+            #POM_NAME=$(head -14 pom.xml|tail -1|grep -oPm1 "(?<=<name>)[^<]+")
+            #echo "POM_APP_VERSION=$POM_VERSION" > ../pom_data.txt
+            #echo "POM_APP_NAME=$POM_NAME" >> ../pom_data.txt            
           fi
           #echo "::set-output name=version::$POM_VERSION"
           #echo "::set-output name=name::$POM_NAME"
-          cat ../pom_data.txt
+          #cat ../pom_data.txt
+          cat pom.xml
+          echo "OK"
 
     - run: echo "STEP_NAME=Generate new version" >> $GITHUB_ENV
       shell: bash
