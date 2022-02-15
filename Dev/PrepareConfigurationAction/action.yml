@@ -40,6 +40,9 @@ runs:
     - run: echo "STEP_NAME=Checkout Source Code" >> $GITHUB_ENV
       shell: bash
 
+    - run: echo "STEP_NAME_TEST=Checkout Source Code" >> $GITHUB_ENV
+      shell: bash
+      
     - name: Checkout Source Code
       uses: actions/checkout@v2.4.0
       with:
@@ -73,19 +76,19 @@ runs:
           cd ${{ inputs.sourcecode_home_path }}
           if [[ "${{inputs.java_version}}" == "11" ]] 
           then
-            #POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-            #POM_NAME=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout)
-            #echo "POM_APP_VERSION=$POM_VERSION" > ../pom_data.txt
-            #echo "POM_APP_NAME=$POM_NAME" >> ../pom_data.txt
             echo "Get Version for Java 11"
+            POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+            POM_NAME=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout)
+            echo "POM_APP_VERSION=$POM_VERSION" > ../pom_data.txt
+            echo "POM_APP_NAME=$POM_NAME" >> ../pom_data.txt            
           else
-            #POM_VERSION=$(head -${{ inputs.pom_line_number }} pom.xml|tail -1|grep -oPm1 "(?<=<version>)[^<]+")
+            echo "Get Version for Java 8"
+            POM_VERSION=$(head -${{ inputs.pom_line_number }} pom.xml|tail -1|grep -oPm1 "(?<=<version>)[^<]+")
             #pom_name_line_number=$(echo ${{ inputs.pom_line_number }})
             #((pom_name_line_number=pom_name_line_number+1))
-            #POM_NAME=$(head -14 pom.xml|tail -1|grep -oPm1 "(?<=<name>)[^<]+")
-            #echo "POM_APP_VERSION=$POM_VERSION" > ../pom_data.txt
-            #echo "POM_APP_NAME=$POM_NAME" >> ../pom_data.txt
-            echo "Get Version for Java 8"
+            POM_NAME=$(head -14 pom.xml|tail -1|grep -oPm1 "(?<=<name>)[^<]+")
+            echo "POM_APP_VERSION=$POM_VERSION" > ../pom_data.txt
+            echo "POM_APP_NAME=$POM_NAME" >> ../pom_data.txt            
           fi
           #echo "::set-output name=version::$POM_VERSION"
           #echo "::set-output name=name::$POM_NAME"
