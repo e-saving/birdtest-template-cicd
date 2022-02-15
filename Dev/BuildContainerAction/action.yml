@@ -14,7 +14,7 @@ runs:
   using: "composite"
   steps:
 
-    - run: echo "STEP_NAME=Log in to Azure Container Registry (ACR)" >> $GITHUB_ENV
+    - run: echo "BC_STEP_NAME=Log in to Azure Container Registry (ACR)" >> $GITHUB_ENV
       shell: bash
       
     - name: Log in to Azure Container Registry (ACR)
@@ -24,7 +24,7 @@ runs:
           username: ${{ env.acr_user }}
           password: ${{ env.acr_password }}
 
-    - run: echo "STEP_NAME=Build and Push Container Image (ACR)" >> $GITHUB_ENV
+    - run: echo "BC_STEP_NAME=Build and Push Container Image (ACR)" >> $GITHUB_ENV
       shell: bash
       
     - name: Build and Push Container Image (ACR)
@@ -36,7 +36,7 @@ runs:
           docker build . -t ${{ env.acr_registry_server }}/${{env.APP_NAME}}:${{env.IMAGE_VERSION}}
           docker push ${{ env.acr_registry_server }}/${{env.APP_NAME}}:${{env.IMAGE_VERSION}}
 
-    - run: echo "STEP_NAME=Security Scan Container Image (Anchore)" >> $GITHUB_ENV
+    - run: echo "BC_STEP_NAME=Security Scan Container Image (Anchore)" >> $GITHUB_ENV
       shell: bash
       
     - name: Security Scan Container Image (Anchore)
@@ -52,7 +52,7 @@ runs:
         # Optionally specify the minimum vulnerability severity to trigger an "error" level ACS result.  Valid choices are "negligible", "low", "medium", "high" and "critical".  Any vulnerability with a severity less than this value will lead to a "warning" result.  Default is "medium".
         #severity-cutoff: critical # optional, default is medium (critical)
 
-    - run: echo "STEP_NAME=Upload Container Image Scan Report (Anchore)" >> $GITHUB_ENV
+    - run: echo "BC_STEP_NAME=Upload Container Image Scan Report (Anchore)" >> $GITHUB_ENV
       shell: bash
       
     - name: Upload Container Image Scan Report (Anchore)
@@ -65,4 +65,4 @@ runs:
       if: ${{ failure() }}
       with:
         github_token: ${{ inputs.github_token }}
-        notify_mesg: "Build Container Failure at step ${{ env.STEP_NAME }}"
+        notify_mesg: "Build Container Failure at step ${{ env.BC_STEP_NAME }}"
