@@ -83,7 +83,10 @@ runs:
             echo "POM_APP_NAME=$POM_NAME" >> ../pom_data.txt            
           else
             echo "Get Version for Java 8"
-            POM_VERSION=$(head -${{ inputs.pom_line_number }} pom.xml|tail -1|grep -oPm1 "(?<=<version>)[^<]+")
+            pwd
+            ls -l            
+            #POM_VERSION=$(head -${{ inputs.pom_line_number }} pom.xml|tail -1|grep -oPm1 "(?<=<version>)[^<]+")
+            POM_VERSION=$(head -13 pom.xml|tail -1|grep -oPm1 "(?<=<version>)[^<]+")
             #pom_name_line_number=$(echo ${{ inputs.pom_line_number }})
             #((pom_name_line_number=pom_name_line_number+1))
             POM_NAME=$(head -14 pom.xml|tail -1|grep -oPm1 "(?<=<name>)[^<]+")
