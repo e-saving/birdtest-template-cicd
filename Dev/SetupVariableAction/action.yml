@@ -11,7 +11,7 @@ inputs:
   gitops_repo:
     descriptions: "GitOps Repository in GitHub"
     required: false
-    default: 'e-saving/gitops_deployment'
+    default: 'e-saving/esaving-gitops'    
   gitops_manage_branch:
     descriptions: "GitOps Repository Branch"
     required: false
