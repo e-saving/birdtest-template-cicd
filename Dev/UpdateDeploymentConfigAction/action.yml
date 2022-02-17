@@ -11,7 +11,11 @@ inputs:
   sourcecode_home_path: 
     descriptions: "Source Code Home Path"
     required: false
-    default: project_src
+    default: project_src  
+  gitops_manage_home_path:
+    descriptions: "GitOps Manage Home Path"
+    required: false
+    default: "helm-esaving-cluster-dev/dev/micro"
 
    
 runs:
@@ -43,24 +47,21 @@ runs:
         directory: ${{ inputs.sourcecode_home_path }}
         
 
-    - run: echo "UPD_STEP_NAME=Commit and push version control file (GitOps Repo)" >> $GITHUB_ENV
-      shell: bash
+    #- run: echo "UPD_STEP_NAME=Commit and push version control file (GitOps Repo)" >> $GITHUB_ENV
+    #  shell: bash 
       
-    - run: echo "GITOPS_MANAGE_HOME_PATH=${{ env.APP_NAME }}" >> $GITHUB_ENV
-      shell: bash
-
-    - name: Commit and push version control file (GitOps Repo)
-      uses: dmnemec/copy_file_to_another_repo_action@main
-      env:
-        API_TOKEN_GITHUB: ${{ inputs.gitops_token }}
-      with:
-        source_file: version/version_control.txt
-        destination_repo: ${{ env.gitops_repo }}
-        destination_folder: ${{ env.GITOPS_MANAGE_HOME_PATH }}
-        destination_branch: ${{ env.gitops_manage_branch }}
-        user_email: 'github_actions@g-able.com'
-        user_name: 'github_actions'
-        commit_message: 'Update new container image version ${{ env.IMAGE_VERSION }} of ${{ env.GITOPS_MANAGE_HOME_PATH }}/version_control.txt'          
+    #- name: Commit and push version control file (GitOps Repo)
+    #  uses: dmnemec/copy_file_to_another_repo_action@main
+    #  env:
+    #    API_TOKEN_GITHUB: ${{ inputs.gitops_token }}
+    #  with:
+    #    source_file: version/version_control.txt
+    #    destination_repo: ${{ env.gitops_repo }}
+    #    destination_folder: ${{ inputs.gitops_manage_home_path }}
+    #    destination_branch: ${{ env.gitops_manage_branch }}
+    #    user_email: 'github_actions@g-able.com'
+    #    user_name: 'github_actions'
+    #    commit_message: 'Update new container image version ${{ env.IMAGE_VERSION }} of ${{ env.GITOPS_MANAGE_HOME_PATH }}/version_control.txt'          
         
     - run: echo "UPD_STEP_NAME=Commit and push deployment configuration (Helm)" >> $GITHUB_ENV
       shell: bash        
@@ -72,7 +73,7 @@ runs:
       with:
          source_file: version/values.yaml
          destination_repo: ${{ env.gitops_repo }}
-         destination_folder: ${{ env.GITOPS_MANAGE_HOME_PATH }}
+         destination_folder: ${{ inputs.gitops_manage_home_path }}
          destination_branch: ${{ env.gitops_manage_branch }}
          user_email: 'github_actions@g-able.com'
          user_name: 'github_actions'
