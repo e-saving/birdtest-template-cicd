@@ -77,7 +77,7 @@ runs:
          destination_branch: ${{ env.gitops_manage_branch }}
          user_email: 'github_actions@g-able.com'
          user_name: 'github_actions'
-         commit_message: 'Update new container image version ${{ env.IMAGE_VERSION }} of ${{ env.GITOPS_MANAGE_HOME_PATH }}/values.yaml'
+         commit_message: 'Update new container image version ${{env.APP_NAME}}:${{ env.IMAGE_VERSION }} of ${{ inputs.gitops_manage_home_path }}/values.yaml'
          
     - name: "Failure Notification" 
       uses: e-saving/birdtest-template-cicd/Dev/NotificationAction@main
