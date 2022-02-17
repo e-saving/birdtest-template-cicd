@@ -142,9 +142,10 @@ runs:
       
     - name: Update gitops configuration
       shell: bash
-      run: |           
+      run: |
+          echo "Update gitops configuration"
           #cd manage_gitops/${{ env.APP_NAME }}
-          image_repo=$(cat manage_gitops/${{ inputs.gitops_manage_home_path }}/values.yaml|grep image|${{ env.APP_NAME }}|awk -F' ' '{print($2)}')
+          image_repo=$(cat manage_gitops/${{ inputs.gitops_manage_home_path }}/values.yaml|grep image|grep ${{ env.APP_NAME }}|awk -F' ' '{print($2)}')
           acr_val=$(echo $image_repo|awk -F'/' '{print($1)}')
           image_val=$(echo $image_repo|awk -F'/' '{print($2)}')
           image_name=$(echo $image_val|awk -F':' '{print($1)}')
