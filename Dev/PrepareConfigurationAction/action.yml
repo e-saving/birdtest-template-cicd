@@ -154,11 +154,11 @@ runs:
           echo "image_name=${image_name}"
           echo "image_tag=${image_tag}"
           new_image_val="${{ env.APP_NAME }}:${{ env.IMAGE_VERSION }}"
-          new_acr_val="${{ env.acr_registry_server }}"          
+          #new_acr_val="${{ env.acr_registry_server }}"
           cp manage_gitops/${{ inputs.gitops_manage_home_path }}/values.yaml version/
           cd version
           sed -i "s/${image_val}/${new_image_val}/g" values.yaml
-          sed -i "s/${acr_val}/${new_acr_val}/g" values.yaml
+          #sed -i "s/${acr_val}/${new_acr_val}/g" values.yaml
           
 
     - run: echo "PREP_STEP_NAME=Upload version artifact" >> $GITHUB_ENV
