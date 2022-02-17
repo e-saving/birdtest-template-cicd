@@ -16,6 +16,10 @@ inputs:
     descriptions: "Source Code Home Path"
     required: false
     default: project_src
+  gitops_manage_home_path:
+    descriptions: "GitOps Manage Home Path"
+    required: false
+    default: "helm-esaving-cluster-dev/dev/micro"    
   pom_line_number: 
     descriptions: "Line no. of version record at pom.xml"
     required: false
@@ -139,8 +143,8 @@ runs:
     - name: Update gitops configuration
       shell: bash
       run: |           
-          cd manage_gitops/${{ env.APP_NAME }}
-          image_repo=$(cat values.yaml|grep image|awk -F' ' '{print($2)}')
+          #cd manage_gitops/${{ env.APP_NAME }}
+          image_repo=$(cat manage_gitops/${{ inputs.gitops_manage_home_path }}/values.yaml|grep image|awk -F' ' '{print($2)}')
           acr_val=$(echo $image_repo|awk -F'/' '{print($1)}')
           image_val=$(echo $image_repo|awk -F'/' '{print($2)}')
           image_name=$(echo $image_val|awk -F':' '{print($1)}')
@@ -150,10 +154,12 @@ runs:
           echo "image_name=${image_name}"
           echo "image_tag=${image_tag}"
           new_image_val="${{ env.APP_NAME }}:${{ env.IMAGE_VERSION }}"
-          new_acr_val="${{ env.acr_registry_server }}"
+          new_acr_val="${{ env.acr_registry_server }}"          
+          cp manage_gitops/${{ inputs.gitops_manage_home_path }}/values.yaml version/
+          cd version
           sed -i "s/${image_val}/${new_image_val}/g" values.yaml
           sed -i "s/${acr_val}/${new_acr_val}/g" values.yaml
-          cp values.yaml ../../version/
+          
 
     - run: echo "PREP_STEP_NAME=Upload version artifact" >> $GITHUB_ENV
       shell: bash
