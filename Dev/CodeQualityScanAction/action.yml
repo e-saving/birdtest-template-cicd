@@ -9,6 +9,10 @@ inputs:
     descriptions: "Source Code Home Path"
     required: false
     default: project_src
+  check_quality_gate: 
+    descriptions: "Check code quality gate true/false"
+    required: false
+    default: true    
 
    
 runs:
@@ -40,7 +44,8 @@ runs:
       shell: bash
       
     - name: Check Code Quality Gate (SonarQube)
-      uses: SonarSource/sonarqube-quality-gate-action@v1.0.0
+    - if: '${{inputs.check_quality_gate}}' == 'true'
+      uses: SonarSource/sonarqube-quality-gate-action@v1.0.0      
       #timeout-minutes: 5
       env:
        SONAR_TOKEN: ${{ env.sonar_token }}
