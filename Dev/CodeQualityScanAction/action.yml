@@ -12,7 +12,7 @@ inputs:
   check_quality_gate: 
     descriptions: "Check code quality gate true/false"
     required: false
-    default: true    
+    default: true
 
    
 runs:
@@ -41,11 +41,12 @@ runs:
           mvn sonar:sonar -Dsonar.projectKey=${{env.APP_NAME}} -Dsonar.host.url=${{ env.sonar_host_url }} -Dsonar.login=${{ env.sonar_token }}
       
     - run: echo "SQ_STEP_NAME=Check Code Quality Gate (SonarQube)" >> $GITHUB_ENV
+      if: {{ "${{ inputs.check_quality_gate }}" == "true" }}
       shell: bash
       
     - name: Check Code Quality Gate (SonarQube)    
       uses: SonarSource/sonarqube-quality-gate-action@v1.0.0      
-      if: ${{ inputs.check_quality_gate }}
+      if: {{ "${{ inputs.check_quality_gate }}" == "true" }}
       #timeout-minutes: 5
       env:
        SONAR_TOKEN: ${{ env.sonar_token }}
