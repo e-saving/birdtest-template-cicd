@@ -45,7 +45,7 @@ runs:
       
     - name: Check Code Quality Gate (SonarQube)    
       uses: SonarSource/sonarqube-quality-gate-action@v1.0.0      
-      if: '${{inputs.check_quality_gate}}' == 'true'
+      if: ${{ inputs.check_quality_gate }}
       #timeout-minutes: 5
       env:
        SONAR_TOKEN: ${{ env.sonar_token }}
