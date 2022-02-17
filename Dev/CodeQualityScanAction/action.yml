@@ -43,9 +43,9 @@ runs:
     - run: echo "SQ_STEP_NAME=Check Code Quality Gate (SonarQube)" >> $GITHUB_ENV
       shell: bash
       
-    #- name: Check Code Quality Gate (SonarQube)
-    - if: '${{inputs.check_quality_gate}}' == 'true'
+    - name: Check Code Quality Gate (SonarQube)    
       uses: SonarSource/sonarqube-quality-gate-action@v1.0.0      
+      if: '${{inputs.check_quality_gate}}' == 'true'
       #timeout-minutes: 5
       env:
        SONAR_TOKEN: ${{ env.sonar_token }}
